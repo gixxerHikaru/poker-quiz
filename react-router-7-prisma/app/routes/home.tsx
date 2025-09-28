@@ -38,7 +38,9 @@ export default function Home() {
         <ul>
           {prefectures.map((prefecture: Prefecture) => (
             <li key={prefecture.id}>
-              <a href={`/prefectures/${prefecture.name}`}>{prefecture.name}</a>
+              <a href={`/prefectures/${prefecture.id}/${prefecture.name}`}>
+                {prefecture.name}
+              </a>
             </li>
           ))}
         </ul>
