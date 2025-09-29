@@ -18,4 +18,12 @@ model Prefectures {
   id Int @id @default(autoincrement())
   name String
   area String
+  visits Visits[]
+}
+
+model Visits {
+  id Int @id @default(autoincrement())
+  visitDate DateTime
+  prefectureId Int
+  prefecture Prefectures @relation(fields: [prefectureId], references: [id])
 }
