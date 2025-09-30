@@ -34,22 +34,42 @@ describe("初期画面表示", async () => {
     {
       prefectureId: 1,
       prefectureName: "北海道",
-      visit: { id: 1, prefectureId: 1, visitDate: "2025-09-01" },
+      visit: {
+        id: 1,
+        prefectureId: 1,
+        visitFromDate: "2025-09-01",
+        visitToDate: "2025-09-01",
+      },
     },
     {
       prefectureId: 2,
       prefectureName: "青森県",
-      visit: { id: 2, prefectureId: 2, visitDate: "2025-09-02" },
+      visit: {
+        id: 2,
+        prefectureId: 2,
+        visitFromDate: "2025-09-02",
+        visitToDate: "2025-09-02",
+      },
     },
     {
       prefectureId: 3,
       prefectureName: "岩手県",
-      visit: { id: 3, prefectureId: 3, visitDate: "2025-09-03" },
+      visit: {
+        id: 3,
+        prefectureId: 3,
+        visitFromDate: "2025-09-03",
+        visitToDate: "2025-09-03",
+      },
     },
     {
       prefectureId: 47,
       prefectureName: "沖縄県",
-      visit: { id: 47, prefectureId: 47, visitDate: "2025-09-04" },
+      visit: {
+        id: 47,
+        prefectureId: 47,
+        visitFromDate: "2025-09-04",
+        visitToDate: "2025-09-04",
+      },
     },
   ])(
     "最後に訪問した日がわかる (%s.prefectureName)",
@@ -75,8 +95,13 @@ describe("初期画面表示", async () => {
       );
 
       expect(await screen.findByText("最後に訪問した日:")).toBeInTheDocument();
+      console.log(visit.visitFromDate, visit.visitToDate);
       expect(
-        await screen.findByText(visit.visitDate.replaceAll("-", "/"))
+        await screen.findByText(
+          visit.visitFromDate.replaceAll("-", "/") +
+            " ~ " +
+            visit.visitToDate.replaceAll("-", "/")
+        )
       ).toBeInTheDocument();
     }
   );

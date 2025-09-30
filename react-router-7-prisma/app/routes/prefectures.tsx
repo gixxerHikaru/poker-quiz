@@ -6,7 +6,8 @@ type LoaderData = {
   visit: {
     id: number;
     prefectureId: number;
-    visitDate: string;
+    visitFromDate: string;
+    visitToDate: string;
   } | null;
 };
 
@@ -16,14 +17,15 @@ export const loader = async ({
   const prefectureId = Number(params.prefectureId);
   const visit = await prisma.visits.findFirst({
     where: { prefectureId },
-    orderBy: { visitDate: "desc" },
+    orderBy: { visitToDate: "desc" },
   });
   return {
     visit: visit
       ? {
           id: visit.id,
           prefectureId: visit.prefectureId,
-          visitDate: visit.visitDate.toISOString(),
+          visitFromDate: visit.visitFromDate.toISOString(),
+          visitToDate: visit.visitToDate.toISOString(),
         }
       : null,
   };
@@ -41,7 +43,13 @@ export default function Prefectures() {
           <p>最後に訪問した日: </p>
           <p>
             {visit
-              ? new Date(visit.visitDate).toLocaleDateString("ja-JP", {
+              ? new Date(visit.visitFromDate).toLocaleDateString("ja-JP", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                }) +
+                " ~ " +
+                new Date(visit.visitToDate).toLocaleDateString("ja-JP", {
                   year: "numeric",
                   month: "2-digit",
                   day: "2-digit",

@@ -1,7 +1,17 @@
 -- CreateTable
+CREATE TABLE "public"."Prefectures" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "area" TEXT NOT NULL,
+
+    CONSTRAINT "Prefectures_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "public"."Visits" (
     "id" SERIAL NOT NULL,
-    "visitDate" TIMESTAMP(3) NOT NULL,
+    "visitFromDate" TIMESTAMP(3) NOT NULL,
+    "visitToDate" TIMESTAMP(3) NOT NULL,
     "prefectureId" INTEGER NOT NULL,
 
     CONSTRAINT "Visits_pkey" PRIMARY KEY ("id")

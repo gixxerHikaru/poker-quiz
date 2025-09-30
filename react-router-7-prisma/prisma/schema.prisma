@@ -23,7 +23,8 @@ model Prefectures {
 
 model Visits {
   id Int @id @default(autoincrement())
-  visitDate DateTime
+  visitFromDate DateTime
+  visitToDate DateTime
   prefectureId Int
   prefecture Prefectures @relation(fields: [prefectureId], references: [id])
 }
