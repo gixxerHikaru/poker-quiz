@@ -34,7 +34,7 @@ export default function Home() {
       <div className="flex items-center justify-center pt-16 pb-4">
         <h1>47都道府県旅行記録</h1>
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center mb-8">
         <ul>
           {prefectures.map((prefecture: Prefecture) => (
             <li key={prefecture.id}>
