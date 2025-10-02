@@ -10,7 +10,7 @@ describe("初期画面表示", async () => {
       Component: Prefectures,
       loader: () => {
         return {
-          lastVisitDate: "2025-09-22",
+          visit: null,
         };
       },
     },
@@ -72,7 +72,7 @@ describe("初期画面表示", async () => {
       },
     },
   ])(
-    "最後に訪問した日がわかる (%s.prefectureName)",
+    "最後に訪問した期間がわかる (%s.prefectureName)",
     async ({ prefectureId, prefectureName, visit }) => {
       const { default: Prefectures } = await import(
         "../../app/routes/prefectures"
@@ -94,8 +94,9 @@ describe("初期画面表示", async () => {
         />
       );
 
-      expect(await screen.findByText("最後に訪問した日:")).toBeInTheDocument();
-      console.log(visit.visitFromDate, visit.visitToDate);
+      expect(
+        await screen.findByText("最後に訪問した期間:")
+      ).toBeInTheDocument();
       expect(
         await screen.findByText(
           visit.visitFromDate.replaceAll("-", "/") +
@@ -122,7 +123,7 @@ describe("初期画面表示", async () => {
       },
     ]);
     render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
-    expect(await screen.findByText("最後に訪問した日:")).toBeInTheDocument();
+    expect(await screen.findByText("最後に訪問した期間:")).toBeInTheDocument();
     expect(
       await screen.findByText("訪れたことがない、、、")
     ).toBeInTheDocument();

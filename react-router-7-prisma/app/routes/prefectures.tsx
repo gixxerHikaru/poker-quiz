@@ -2,6 +2,16 @@ import { useParams, useLoaderData } from "react-router";
 import prisma from "../lib/prisma";
 import type { Route } from "./+types/prefectures";
 
+type ActionData = {
+  success: boolean;
+};
+
+type submitData = {
+  prefectureId: number;
+  visitFromDate: string;
+  visitToDate: string;
+};
+
 type LoaderData = {
   visit: {
     id: number;
@@ -10,6 +20,38 @@ type LoaderData = {
     visitToDate: string;
   } | null;
 };
+
+export async function action({
+  request,
+}: Route.ActionArgs): Promise<ActionData> {
+  const formData = await request.formData();
+  const prefectureIdRaw = formData.get("prefectureId");
+  const visitFromDateRaw = formData.get("visitFromDate");
+  const visitToDateRaw = formData.get("visitToDate");
+
+  if (
+    typeof prefectureIdRaw !== "string" ||
+    typeof visitFromDateRaw !== "string" ||
+    typeof visitToDateRaw !== "string"
+  ) {
+    return { success: false };
+  }
+
+  const prefectureId = Number(prefectureIdRaw);
+  const visitFromDate = new Date(visitFromDateRaw);
+  const visitToDate = new Date(visitToDateRaw);
+
+  await prisma.visits.create({
+    data: {
+      prefectureId,
+      visitFromDate,
+      visitToDate,
+    },
+  });
+  return {
+    success: true,
+  };
+}
 
 export const loader = async ({
   params,
@@ -40,7 +82,7 @@ export default function Prefectures() {
       <div className="flex flex-col items-center justify-center pt-16 pb-4">
         <h1>{prefectureName}</h1>
         <div className="flex items-center">
-          <p>最後に訪問した日: </p>
+          <p>最後に訪問した期間: </p>
           <p>
             {visit
               ? new Date(visit.visitFromDate).toLocaleDateString("ja-JP", {
@@ -56,6 +98,43 @@ export default function Prefectures() {
                 })
               : "訪れたことがない、、、"}
           </p>
+        </div>
+        <div className="flex flex-col items-center border border-gray-500 p-4 mt-4">
+          <form method="post">
+            <input type="hidden" name="prefectureId" value={prefectureId} />
+            <label htmlFor="visitFromDate" className="mt-2">
+              訪問期間
+            </label>
+            <div className="flex mt-2">
+              <div className="flex flex-col">
+                <label htmlFor="visitFromDate">訪問日</label>
+                <input
+                  type="date"
+                  id="visitFromDate"
+                  name="visitFromDate"
+                  className="mt-2"
+                  defaultValue={visit?.visitFromDate || ""}
+                />
+              </div>
+              <div className="mt-4 flex mx-6">~</div>
+              <div className="flex flex-col">
+                <label htmlFor="visitToDate">帰宅日</label>
+                <input
+                  type="date"
+                  id="visitToDate"
+                  name="visitToDate"
+                  className="mt-2"
+                  defaultValue={visit?.visitToDate || ""}
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="mt-4 button-primary border-blue-500 text-blue-500 hover:border-blue-500 hover:text-blue-500"
+            >
+              登録
+            </button>
+          </form>
         </div>
       </div>
     </>
