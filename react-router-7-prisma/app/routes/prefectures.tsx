@@ -1,4 +1,4 @@
-import { useParams, useLoaderData } from "react-router";
+import { useParams, useLoaderData, Link } from "react-router";
 import prisma from "../lib/prisma";
 import type { Route } from "./+types/prefectures";
 
@@ -135,6 +135,9 @@ export default function Prefectures() {
               登録
             </button>
           </form>
+        </div>
+        <div className="flex mt-4 ">
+          <Link to="/">戻る</Link>
         </div>
       </div>
     </>

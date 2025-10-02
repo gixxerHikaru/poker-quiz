@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { expect, test, describe, vi } from "vitest";
+import { expect, test, describe } from "vitest";
 import { createRoutesStub } from "react-router";
+import userEvent from "@testing-library/user-event";
+import Home from "~/routes/home";
 
 describe("初期画面表示", async () => {
   const { default: Prefectures } = await import("../../app/routes/prefectures");
@@ -127,5 +129,35 @@ describe("初期画面表示", async () => {
     expect(
       await screen.findByText("訪れたことがない、、、")
     ).toBeInTheDocument();
+  });
+
+  test("戻るボタンを押すと、前のページに戻る", async () => {
+    const { default: Prefectures } = await import(
+      "../../app/routes/prefectures"
+    );
+    const Stub = createRoutesStub([
+      {
+        path: "/",
+        Component: Home,
+        loader: () => {
+          return { prefectures: [] };
+        },
+      },
+      {
+        path: "/prefectures/:prefectureId/:prefectureName",
+        Component: Prefectures,
+        loader: () => {
+          return {
+            visit: null,
+          };
+        },
+      },
+    ]);
+    render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+    const backButton = await screen.findByRole("link", { name: "戻る" });
+    expect(backButton).toBeInTheDocument();
+    await userEvent.click(backButton);
+    expect(window.history.length).toBe(1);
+    expect(await screen.findByText("47都道府県旅行記録")).toBeInTheDocument();
   });
 });

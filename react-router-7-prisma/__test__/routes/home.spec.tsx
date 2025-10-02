@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { expect, test, describe, vi } from "vitest";
 import { createRoutesStub } from "react-router";
+import userEvent from "@testing-library/user-event";
 
 const prefectures = [
   { id: 1, name: "北海道", area: "北海道" },
@@ -70,6 +71,7 @@ describe("loader", () => {
 
 describe("初期画面表示", async () => {
   const { default: Home } = await import("../../app/routes/home");
+  const { default: Prefectures } = await import("../../app/routes/prefectures");
   const Stub = createRoutesStub([
     {
       path: "/",
@@ -79,6 +81,17 @@ describe("初期画面表示", async () => {
           prefectures,
         };
       },
+      children: [
+        {
+          path: "/prefectures/:prefectureId/:prefectureName",
+          Component: Prefectures,
+          loader: () => {
+            return {
+              visit: null,
+            };
+          },
+        },
+      ],
     },
   ]);
   test("タイトルが見える", async () => {
@@ -93,4 +106,15 @@ describe("初期画面表示", async () => {
       expect(screenData[index]).toHaveTextContent(prefectures[index].name);
     });
   });
+
+  test.each([{ prefectureName: "北海道" }, { prefectureName: "沖縄県" }])(
+    "%s を押すと、都道府県の詳細ページに遷移する",
+    async ({ prefectureName }) => {
+      render(<Stub initialEntries={["/"]} />);
+      const prefectureNameLink = await screen.findByText(prefectureName);
+      expect(prefectureNameLink).toBeInTheDocument();
+      await userEvent.click(prefectureNameLink);
+      expect(await screen.findByText(prefectureName)).toBeInTheDocument();
+    }
+  );
 });
