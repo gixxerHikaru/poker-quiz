@@ -1,6 +1,7 @@
 import { useParams, useLoaderData, Link } from "react-router";
 import prisma from "../lib/prisma";
 import type { Route } from "./+types/prefectures";
+import { useMemo, useState } from "react";
 
 type ActionData = {
   success: boolean;
@@ -34,6 +35,10 @@ export async function action({
     typeof visitFromDateRaw !== "string" ||
     typeof visitToDateRaw !== "string"
   ) {
+    return { success: false };
+  }
+
+  if (visitToDateRaw < visitFromDateRaw) {
     return { success: false };
   }
 
@@ -77,6 +82,28 @@ export default function Prefectures() {
   const { prefectureId, prefectureName } = useParams();
   const { visit } = useLoaderData<typeof loader>();
 
+  const normalizeToDateInput = (value?: string | null) => {
+    if (!value) return "";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    try {
+      return new Date(value).toISOString().slice(0, 10);
+    } catch (_) {
+      return "";
+    }
+  };
+
+  const [fromDate, setFromDate] = useState<string>(
+    normalizeToDateInput(visit?.visitFromDate)
+  );
+  const [toDate, setToDate] = useState<string>(
+    normalizeToDateInput(visit?.visitToDate)
+  );
+
+  const isRangeInvalid = useMemo(() => {
+    if (!fromDate || !toDate) return false;
+    return toDate < fromDate;
+  }, [fromDate, toDate]);
+
   return (
     <>
       <div className="flex flex-col items-center justify-center pt-16 pb-4">
@@ -113,7 +140,9 @@ export default function Prefectures() {
                   id="visitFromDate"
                   name="visitFromDate"
                   className="mt-2"
-                  defaultValue={visit?.visitFromDate || ""}
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.currentTarget.value)}
+                  required
                 />
               </div>
               <div className="mt-4 flex mx-6">~</div>
@@ -124,14 +153,26 @@ export default function Prefectures() {
                   id="visitToDate"
                   name="visitToDate"
                   className="mt-2"
-                  defaultValue={visit?.visitToDate || ""}
+                  value={toDate}
+                  onChange={(e) => setToDate(e.currentTarget.value)}
+                  required
                 />
               </div>
             </div>
             <div className="flex mt-4 justify-end">
+              {isRangeInvalid && (
+                <p className="text-red-500">訪問日が帰宅日より後です</p>
+              )}
+            </div>
+            <div className="flex mt-4 justify-end">
               <button
                 type="submit"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                className={
+                  isRangeInvalid
+                    ? "text-white bg-gray-400 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-600"
+                    : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                }
+                disabled={isRangeInvalid ? true : false}
               >
                 登録
               </button>

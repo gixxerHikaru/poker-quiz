@@ -251,4 +251,33 @@ describe("日付入力フォーム", async () => {
       expect(capturedFormData).toEqual(null);
     });
   });
+
+  test("訪問日が帰宅日より後になるとエラーメッセージが表示される", async () => {
+    render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
+
+    const fromInput = await screen.findByLabelText("訪問日");
+    const toInput = await screen.findByLabelText("帰宅日");
+
+    await userEvent.clear(fromInput);
+    await userEvent.type(fromInput, "2025-09-12");
+    await userEvent.clear(toInput);
+    await userEvent.type(toInput, "2025-09-10");
+
+    expect(await screen.findByText("訪問日が帰宅日より後です"));
+  });
+
+  test("エラーメッセージが表示されているとき、登録ボタンが押せない", async () => {
+    render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
+
+    const fromInput = await screen.findByLabelText("訪問日");
+    const toInput = await screen.findByLabelText("帰宅日");
+    const submit = await screen.findByRole("button", { name: "登録" });
+
+    await userEvent.clear(fromInput);
+    await userEvent.type(fromInput, "2025-09-12");
+    await userEvent.clear(toInput);
+    await userEvent.type(toInput, "2025-09-10");
+
+    expect(submit).toBeDisabled();
+  });
 });
