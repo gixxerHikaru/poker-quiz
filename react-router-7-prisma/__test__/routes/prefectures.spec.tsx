@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import { expect, test, describe } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { expect, test, describe, vi } from "vitest";
 import { createRoutesStub } from "react-router";
 import userEvent from "@testing-library/user-event";
 import Home from "~/routes/home";
@@ -159,5 +159,96 @@ describe("初期画面表示", async () => {
     await userEvent.click(backButton);
     expect(window.history.length).toBe(1);
     expect(await screen.findByText("47都道府県旅行記録")).toBeInTheDocument();
+  });
+});
+
+describe("日付入力フォーム", async () => {
+  const { default: Prefectures } = await import("../../app/routes/prefectures");
+  const Stub = createRoutesStub([
+    {
+      path: "/prefectures/:prefectureId/:prefectureName",
+      Component: Prefectures,
+      loader: () => ({ visit: null }),
+    },
+  ]);
+
+  let capturedFormData: Record<string, string> | null = null;
+  const action = vi.fn(async ({ request }: any) => {
+    const fd = await request.formData();
+    capturedFormData = {
+      prefectureId: fd.get("prefectureId") as string,
+      visitFromDate: fd.get("visitFromDate") as string,
+      visitToDate: fd.get("visitToDate") as string,
+    };
+    return { success: true };
+  });
+
+  const ActionStub = createRoutesStub([
+    {
+      path: "/prefectures/:prefectureId/:prefectureName",
+      Component: Prefectures,
+      loader: () => ({ visit: null }),
+      action,
+    },
+  ]);
+
+  test("フォーム要素が表示され、必須属性が付いている", async () => {
+    render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+
+    const fromInput = await screen.findByLabelText("訪問日");
+    const toInput = await screen.findByLabelText("帰宅日");
+
+    expect(fromInput).toBeInTheDocument();
+    expect(toInput).toBeInTheDocument();
+    expect(fromInput).toHaveAttribute("required");
+    expect(toInput).toHaveAttribute("required");
+    expect((fromInput as HTMLInputElement).value).toBe("");
+    expect((toInput as HTMLInputElement).value).toBe("");
+  });
+
+  test("必須項目を入力して送信すると action に formData が渡る", async () => {
+    render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
+
+    const fromInput = await screen.findByLabelText("訪問日");
+    const toInput = await screen.findByLabelText("帰宅日");
+    const submit = await screen.findByRole("button", { name: "登録" });
+
+    await userEvent.clear(fromInput);
+    await userEvent.type(fromInput, "2025-09-10");
+    await userEvent.clear(toInput);
+    await userEvent.type(toInput, "2025-09-12");
+    await userEvent.click(submit);
+
+    waitFor(() => {
+      expect(action).toHaveBeenCalledTimes(1);
+    });
+
+    waitFor(() => {
+      expect(capturedFormData).toEqual({
+        prefectureId: "47",
+        visitFromDate: "2025-09-10",
+        visitToDate: "2025-09-12",
+      });
+    });
+  });
+
+  test("必須項目を入力しないと action に formData が渡らない", async () => {
+    render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
+
+    const fromInput = await screen.findByLabelText("訪問日");
+    const toInput = await screen.findByLabelText("帰宅日");
+    const submit = await screen.findByRole("button", { name: "登録" });
+
+    await userEvent.clear(fromInput);
+    await userEvent.clear(toInput);
+    await userEvent.click(submit);
+
+    waitFor(() => {
+      expect(action).toHaveBeenCalledTimes(0);
+    });
+
+    waitFor(() => {
+      expect(capturedFormData).toEqual(null);
+    });
   });
 });
