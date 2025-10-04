@@ -96,7 +96,7 @@ export default function Prefectures() {
                   month: "2-digit",
                   day: "2-digit",
                 })
-              : "訪れたことがない、、、"}
+              : "まだ行ったこと無い、、、今度行こ！"}
           </p>
         </div>
         <div className="flex flex-col items-center border border-gray-500 p-4 mt-4">

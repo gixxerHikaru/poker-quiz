@@ -127,7 +127,7 @@ describe("初期画面表示", async () => {
     render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
     expect(await screen.findByText("最後に訪問した期間:")).toBeInTheDocument();
     expect(
-      await screen.findByText("訪れたことがない、、、")
+      await screen.findByText("まだ行ったこと無い、、、今度行こ！")
     ).toBeInTheDocument();
   });
 
