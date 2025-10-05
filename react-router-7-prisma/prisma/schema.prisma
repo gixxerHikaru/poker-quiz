@@ -26,5 +26,6 @@ model Visits {
   visitFromDate DateTime
   visitToDate DateTime
   prefectureId Int
+  memo String?
   prefecture Prefectures @relation(fields: [prefectureId], references: [id])
 }

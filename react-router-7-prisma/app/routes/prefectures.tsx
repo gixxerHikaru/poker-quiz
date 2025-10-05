@@ -19,6 +19,7 @@ type LoaderData = {
     prefectureId: number;
     visitFromDate: string;
     visitToDate: string;
+    memo: string;
   } | null;
 };
 
@@ -73,6 +74,7 @@ export const loader = async ({
           prefectureId: visit.prefectureId,
           visitFromDate: visit.visitFromDate.toISOString(),
           visitToDate: visit.visitToDate.toISOString(),
+          memo: visit.memo,
         }
       : null,
   };
@@ -108,28 +110,35 @@ export default function Prefectures() {
     <>
       <div className="flex flex-col items-center justify-center pt-16 pb-4">
         <h1>{prefectureName}</h1>
-        <div className="flex items-center">
-          <p>最後に訪問した期間: </p>
-          <p>
-            {visit
-              ? new Date(visit.visitFromDate).toLocaleDateString("ja-JP", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                }) +
-                " ~ " +
-                new Date(visit.visitToDate).toLocaleDateString("ja-JP", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                })
-              : "まだ行ったこと無い、、、今度行こ！"}
-          </p>
+        <div className="flex flex-col mt-4 items-start border border-gray-500 p-4">
+          <h2 className="text-xl font-bold">最終訪問履歴</h2>
+          <div className="flex mt-2 items-start">
+            <p className="flex-none">最後に訪問した期間: </p>
+            <p className="flex-1">
+              {visit
+                ? new Date(visit.visitFromDate).toLocaleDateString("ja-JP", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  }) +
+                  " ~ " +
+                  new Date(visit.visitToDate).toLocaleDateString("ja-JP", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })
+                : "まだ行ったこと無い、、、今度行こ！"}
+            </p>
+          </div>
+          <div className="flex mt-2 items-start">
+            <p className="flex-none">メモ(行ったところ等): </p>
+            <p className="flex-1">{visit?.memo}</p>
+          </div>
         </div>
         <div className="flex flex-col items-center border border-gray-500 p-4 mt-4">
           <form method="post">
             <input type="hidden" name="prefectureId" value={prefectureId} />
-            <label htmlFor="visitFromDate" className="mt-2">
+            <label htmlFor="visitFromDate" className="text-xl font-bold mt-2">
               訪問期間
             </label>
             <div className="flex mt-2">
