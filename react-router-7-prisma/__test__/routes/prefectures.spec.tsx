@@ -131,6 +131,38 @@ describe("初期画面表示", async () => {
     ).toBeInTheDocument();
   });
 
+  test("メモを見ることができる", async () => {
+    const { default: Prefectures } = await import(
+      "../../app/routes/prefectures"
+    );
+    const Stub = createRoutesStub([
+      {
+        path: "/prefectures/:prefectureId/:prefectureName",
+        Component: Prefectures,
+        loader: () => {
+          return {
+            visit: {
+              id: 1,
+              prefectureId: 47,
+              visitFromDate: "2025-09-01",
+              visitToDate: "2025-09-01",
+              memo: "メモ書いてみた",
+            },
+          };
+        },
+      },
+    ]);
+    render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+    expect(await screen.findByText("最後に訪問した期間:"));
+    expect(
+      await screen.findByText("2025/09/01 ~ 2025/09/01")
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText("メモ(行ったところ等):")
+    ).toBeInTheDocument();
+    expect(await screen.findByText("メモ書いてみた")).toBeInTheDocument();
+  });
+
   test("戻るボタンを押すと、前のページに戻る", async () => {
     const { default: Prefectures } = await import(
       "../../app/routes/prefectures"
@@ -162,7 +194,7 @@ describe("初期画面表示", async () => {
   });
 });
 
-describe("日付入力フォーム", async () => {
+describe("入力フォーム", async () => {
   const { default: Prefectures } = await import("../../app/routes/prefectures");
   const Stub = createRoutesStub([
     {
@@ -179,6 +211,7 @@ describe("日付入力フォーム", async () => {
       prefectureId: fd.get("prefectureId") as string,
       visitFromDate: fd.get("visitFromDate") as string,
       visitToDate: fd.get("visitToDate") as string,
+      memo: fd.get("memo") as string,
     };
     return { success: true };
   });
@@ -211,12 +244,15 @@ describe("日付入力フォーム", async () => {
 
     const fromInput = await screen.findByLabelText("訪問日");
     const toInput = await screen.findByLabelText("帰宅日");
+    const memoInput = await screen.findByLabelText("メモ");
     const submit = await screen.findByRole("button", { name: "登録" });
 
     await userEvent.clear(fromInput);
     await userEvent.type(fromInput, "2025-09-10");
     await userEvent.clear(toInput);
     await userEvent.type(toInput, "2025-09-12");
+    await userEvent.clear(memoInput);
+    await userEvent.type(memoInput, "メモ書いてみた");
     await userEvent.click(submit);
 
     waitFor(() => {
@@ -228,6 +264,7 @@ describe("日付入力フォーム", async () => {
         prefectureId: "47",
         visitFromDate: "2025-09-10",
         visitToDate: "2025-09-12",
+        memo: "メモ書いてみた",
       });
     });
   });
