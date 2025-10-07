@@ -2,6 +2,8 @@ import { useParams, useLoaderData, Link } from "react-router";
 import prisma from "../lib/prisma";
 import type { Route } from "./+types/prefectures";
 import { useMemo, useState } from "react";
+import MainBar from "~/components/MainBar";
+import EndBar from "~/components/EndBar";
 
 type ActionData = {
   success: boolean;
@@ -113,101 +115,98 @@ export default function Prefectures() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center pt-16 pb-4">
-        <h1>{prefectureName}</h1>
-        <div className="flex flex-col mt-4 items-start border border-gray-500 p-4">
-          <h2 className="text-xl font-bold">最終訪問履歴</h2>
-          <div className="flex mt-2 items-start">
-            <p className="flex-none">最後に訪問した期間: </p>
-            <p className="flex-1">
-              {visit
-                ? new Date(visit.visitFromDate).toLocaleDateString("ja-JP", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                  }) +
-                  " ~ " +
-                  new Date(visit.visitToDate).toLocaleDateString("ja-JP", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                  })
-                : "まだ行ったこと無い、、、今度行こ！"}
-            </p>
+      <div className="w-full min-h-screen flex justify-center bg-[#2580C3]">
+        <MainBar>
+          <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">47都道府県旅行記録</h1>
+        </MainBar>
+        <div className="w-full max-w-[960px] mx-auto px-4 pt-[180px] pb-[80px]">
+          <div className="mb-6">
+            <div className="flex justify-end">
+              <Link to="/" className="text-sm px-4 py-2 rounded-md bg-white/90 hover:bg-white text-[#111] border border-black/20">トップへ戻る</Link>
+            </div>
+            <h1 className="mt-3 text-3xl font-bold text-white text-center">{prefectureName}</h1>
           </div>
-          <div className="flex mt-2 items-start">
-            <p className="flex-none">メモ(行ったところ等): </p>
-            <p className="flex-1">{visit?.memo}</p>
+
+          <div className="bg-white border border-black/20 rounded-xl shadow-sm p-6">
+            <h2 className="text-xl font-bold text-black">最終訪問履歴</h2>
+            <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3 text-black">
+              <div className="font-semibold">最後に訪問した期間</div>
+              <div className="md:col-span-2">
+                {visit
+                  ? `${new Date(visit.visitFromDate).toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit" })} ~ ${new Date(visit.visitToDate).toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit" })}`
+                  : "まだ行ったこと無い、、、今度行こ！"}
+              </div>
+              <div className="font-semibold">メモ(行ったところ等)</div>
+              <div className="md:col-span-2">{visit?.memo ?? "-"}</div>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-col items-center border border-gray-500 p-4 mt-4">
-          <form method="post">
-            <input type="hidden" name="prefectureId" value={prefectureId} />
-            <label htmlFor="visitFromDate" className="text-xl font-bold mt-2">
-              訪問期間
-            </label>
-            <div className="flex mt-2">
-              <div className="flex flex-col">
-                <label htmlFor="visitFromDate">訪問日</label>
+
+          <div className="bg-white border border-black/20 rounded-xl shadow-sm p-6 mt-6">
+            <form method="post" className="space-y-4">
+              <input type="hidden" name="prefectureId" value={prefectureId} />
+              <div>
+                <label htmlFor="visitFromDate" className="block text-sm font-bold text-black">訪問日</label>
                 <input
                   type="date"
                   id="visitFromDate"
                   name="visitFromDate"
-                  className="mt-2"
+                  className="mt-1 w-full md:w-[220px] rounded-md border border-black/40 px-2 py-1 text-sm bg-white text-black placeholder:text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
                   value={fromDate}
                   onChange={(e) => setFromDate(e.currentTarget.value)}
                   required
                 />
               </div>
-              <div className="mt-4 flex mx-6">~</div>
-              <div className="flex flex-col">
-                <label htmlFor="visitToDate">帰宅日</label>
+              <div>
+                <label htmlFor="visitToDate" className="block text-sm font-bold text-black">帰宅日</label>
                 <input
                   type="date"
                   id="visitToDate"
                   name="visitToDate"
-                  className="mt-2"
+                  className="mt-1 w-full md:w-[220px] rounded-md border border-black/40 px-2 py-1 text-sm bg-white text-black placeholder:text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
                   value={toDate}
                   onChange={(e) => setToDate(e.currentTarget.value)}
                   required
                 />
               </div>
-            </div>
-            <div className="flex flex-col mt-2">
-              <label htmlFor="memo">メモ</label>
-              <input
-                type="text"
-                id="memo"
-                name="memo"
-                className="mt-2"
-                value={memo}
-                onChange={(e) => setMemo(e.currentTarget.value)}
-              />
-            </div>
-            <div className="flex mt-4 justify-end">
+              <div>
+                <label htmlFor="memo" className="block text-sm font-bold text-black">メモ</label>
+                <input
+                  type="text"
+                  id="memo"
+                  name="memo"
+                  className="mt-1 w-full rounded-md border border-black/30 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black placeholder:text-black"
+                  value={memo}
+                  onChange={(e) => setMemo(e.currentTarget.value)}
+                  placeholder="例: 食べたもの・行った場所"
+                />
+              </div>
               {isRangeInvalid && (
-                <p className="text-red-500">訪問日が帰宅日より後です</p>
+                <p className="text-sm text-red-600">訪問日が帰宅日より後です</p>
               )}
-            </div>
-            <div className="flex mt-4 justify-end">
-              <button
-                type="submit"
-                className={
-                  isRangeInvalid
-                    ? "text-white bg-gray-400 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-600"
-                    : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                }
-                disabled={isRangeInvalid ? true : false}
-              >
-                登録
-              </button>
-            </div>
-          </form>
+              <div className="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  className={
+                    isRangeInvalid
+                      ? "px-5 py-2 rounded-md text-white bg-gray-400"
+                      : "px-5 py-2 rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300"
+                  }
+                  disabled={isRangeInvalid}
+                >
+                  登録
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div className="flex mt-4 ">
-          <Link to="/">戻る</Link>
-        </div>
+        <EndBar />
       </div>
+      {/* style tag scoped for calendar icon color on WebKit */}
+      <style>{`
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: invert(28%) sepia(93%) saturate(1452%) hue-rotate(195deg) brightness(93%) contrast(94%);
+        }
+      `}</style>
     </>
   );
 }

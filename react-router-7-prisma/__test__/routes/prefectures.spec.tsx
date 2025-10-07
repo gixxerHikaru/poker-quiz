@@ -97,7 +97,7 @@ describe("初期画面表示", async () => {
       );
 
       expect(
-        await screen.findByText("最後に訪問した期間:")
+        await screen.findByText("最後に訪問した期間")
       ).toBeInTheDocument();
       expect(
         await screen.findByText(
@@ -125,7 +125,7 @@ describe("初期画面表示", async () => {
       },
     ]);
     render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
-    expect(await screen.findByText("最後に訪問した期間:")).toBeInTheDocument();
+    expect(await screen.findByText("最後に訪問した期間")).toBeInTheDocument();
     expect(
       await screen.findByText("まだ行ったこと無い、、、今度行こ！")
     ).toBeInTheDocument();
@@ -153,17 +153,17 @@ describe("初期画面表示", async () => {
       },
     ]);
     render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
-    expect(await screen.findByText("最後に訪問した期間:"));
+    expect(await screen.findByText("最後に訪問した期間"));
     expect(
       await screen.findByText("2025/09/01 ~ 2025/09/01")
     ).toBeInTheDocument();
     expect(
-      await screen.findByText("メモ(行ったところ等):")
+      await screen.findByText("メモ(行ったところ等)")
     ).toBeInTheDocument();
     expect(await screen.findByText("メモ書いてみた")).toBeInTheDocument();
   });
 
-  test("戻るボタンを押すと、前のページに戻る", async () => {
+  test("トップへ戻るボタンを押すと、トップページに戻る", async () => {
     const { default: Prefectures } = await import(
       "../../app/routes/prefectures"
     );
@@ -186,7 +186,9 @@ describe("初期画面表示", async () => {
       },
     ]);
     render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
-    const backButton = await screen.findByRole("link", { name: "戻る" });
+    const backButton = await screen.findByRole("link", {
+      name: "トップへ戻る",
+    });
     expect(backButton).toBeInTheDocument();
     await userEvent.click(backButton);
     expect(window.history.length).toBe(1);

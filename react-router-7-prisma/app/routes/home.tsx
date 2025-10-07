@@ -1,6 +1,8 @@
 import type { Route } from "./+types/home";
 import prisma from "../lib/prisma";
 import { useLoaderData } from "react-router";
+import MainBar from "../components/MainBar";
+import EndBar from "../components/EndBar";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -134,11 +136,9 @@ export default function Home() {
     <>
       <div className="w-full min-h-screen flex justify-center bg-[#2580C3]">
         <div className="w-full max-w-[1440px] h-[1024px] relative">
-          <div className="fixed left-0 right-0 top-0 h-[150px] bg-[#D9D9D9] flex items-center justify-center z-20">
-            <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">
-              47都道府県旅行記録
-            </h1>
-          </div>
+          <MainBar>
+            <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">47都道府県旅行記録</h1>
+          </MainBar>
           <div className="absolute left-0 top-[150px] w-full h-[824px] bg-[#2580C3]">
             <ul className="relative w-full h-full">
               {prefectures.map((p) => {
@@ -169,7 +169,7 @@ export default function Home() {
               })}
             </ul>
           </div>
-          <div className="fixed bottom-0 left-0 w-full h-[50px] bg-[#444444] z-10" />
+          <EndBar />
         </div>
       </div>
     </>
