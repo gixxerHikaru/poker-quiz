@@ -52,14 +52,34 @@ export async function action({
   const visitFromDate = new Date(visitFromDateRaw);
   const visitToDate = new Date(visitToDateRaw);
 
-  await prisma.visits.create({
-    data: {
+  const existing = await prisma.visits.findFirst({
+    where: {
       prefectureId,
       visitFromDate,
       visitToDate,
-      memo: memoRaw,
     },
+    orderBy: { visitToDate: "desc" },
   });
+
+  if (existing) {
+    await prisma.visits.update({
+      where: { id: existing.id },
+      data: {
+        memo: memoRaw,
+        visitFromDate,
+        visitToDate,
+      },
+    });
+  } else {
+    await prisma.visits.create({
+      data: {
+        prefectureId,
+        visitFromDate,
+        visitToDate,
+        memo: memoRaw,
+      },
+    });
+  }
   return {
     success: true,
   };
@@ -117,14 +137,23 @@ export default function Prefectures() {
     <>
       <div className="w-full min-h-screen flex justify-center bg-[#2580C3]">
         <MainBar>
-          <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">47都道府県旅行記録</h1>
+          <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">
+            47都道府県旅行記録
+          </h1>
         </MainBar>
         <div className="w-full max-w-[960px] mx-auto px-4 pt-[180px] pb-[80px]">
           <div className="mb-6">
             <div className="flex justify-end">
-              <Link to="/" className="text-sm px-4 py-2 rounded-md bg-white/90 hover:bg-white text-[#111] border border-black/20">トップへ戻る</Link>
+              <Link
+                to="/"
+                className="text-sm px-4 py-2 rounded-md bg-white/90 hover:bg-white text-[#111] border border-black/20"
+              >
+                トップへ戻る
+              </Link>
             </div>
-            <h1 className="mt-3 text-3xl font-bold text-white text-center">{prefectureName}</h1>
+            <h1 className="mt-3 text-3xl font-bold text-white text-center">
+              {prefectureName}
+            </h1>
           </div>
 
           <div className="bg-white border border-black/20 rounded-xl shadow-sm p-6">
@@ -145,7 +174,12 @@ export default function Prefectures() {
             <form method="post" className="space-y-4">
               <input type="hidden" name="prefectureId" value={prefectureId} />
               <div>
-                <label htmlFor="visitFromDate" className="block text-sm font-bold text-black">訪問日</label>
+                <label
+                  htmlFor="visitFromDate"
+                  className="block text-sm font-bold text-black"
+                >
+                  訪問日
+                </label>
                 <input
                   type="date"
                   id="visitFromDate"
@@ -157,7 +191,12 @@ export default function Prefectures() {
                 />
               </div>
               <div>
-                <label htmlFor="visitToDate" className="block text-sm font-bold text-black">帰宅日</label>
+                <label
+                  htmlFor="visitToDate"
+                  className="block text-sm font-bold text-black"
+                >
+                  帰宅日
+                </label>
                 <input
                   type="date"
                   id="visitToDate"
@@ -169,7 +208,12 @@ export default function Prefectures() {
                 />
               </div>
               <div>
-                <label htmlFor="memo" className="block text-sm font-bold text-black">メモ</label>
+                <label
+                  htmlFor="memo"
+                  className="block text-sm font-bold text-black"
+                >
+                  メモ
+                </label>
                 <input
                   type="text"
                   id="memo"

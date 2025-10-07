@@ -96,9 +96,7 @@ describe("初期画面表示", async () => {
         />
       );
 
-      expect(
-        await screen.findByText("最後に訪問した期間")
-      ).toBeInTheDocument();
+      expect(await screen.findByText("最後に訪問した期間")).toBeInTheDocument();
       expect(
         await screen.findByText(
           visit.visitFromDate.replaceAll("-", "/") +
@@ -157,9 +155,7 @@ describe("初期画面表示", async () => {
     expect(
       await screen.findByText("2025/09/01 ~ 2025/09/01")
     ).toBeInTheDocument();
-    expect(
-      await screen.findByText("メモ(行ったところ等)")
-    ).toBeInTheDocument();
+    expect(await screen.findByText("メモ(行ったところ等)")).toBeInTheDocument();
     expect(await screen.findByText("メモ書いてみた")).toBeInTheDocument();
   });
 
@@ -318,5 +314,61 @@ describe("入力フォーム", async () => {
     await userEvent.type(toInput, "2025-09-10");
 
     expect(submit).toBeDisabled();
+  });
+
+  test("既に旅行が記録してあるところにメモだけ書き換えても画面が更新される", async () => {
+    const { default: Prefectures } = await import(
+      "../../app/routes/prefectures"
+    );
+    const Stub = createRoutesStub([
+      {
+        path: "/prefectures/:prefectureId/:prefectureName",
+        Component: Prefectures,
+        loader: () => {
+          return {
+            visit: {
+              id: 1,
+              prefectureId: 47,
+              visitFromDate: "2025-09-01",
+              visitToDate: "2025-09-01",
+              memo: "過去メモ",
+            },
+          };
+        },
+      },
+    ]);
+    render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+
+    const fromInput = await screen.findByLabelText("訪問日");
+    const toInput = await screen.findByLabelText("帰宅日");
+    const memoInput = await screen.findByLabelText("メモ");
+    const submit = await screen.findByRole("button", { name: "登録" });
+
+    expect(await screen.findByText("過去メモ")).toBeInTheDocument();
+
+    await userEvent.clear(fromInput);
+    await userEvent.type(fromInput, "2025-09-10");
+    await userEvent.clear(toInput);
+    await userEvent.type(toInput, "2025-09-12");
+    await userEvent.clear(memoInput);
+    await userEvent.type(memoInput, "メモ更新");
+    await userEvent.click(submit);
+
+    waitFor(() => {
+      expect(action).toHaveBeenCalledTimes(1);
+    });
+
+    waitFor(() => {
+      expect(capturedFormData).toEqual({
+        prefectureId: "47",
+        visitFromDate: "2025-09-10",
+        visitToDate: "2025-09-12",
+        memo: "メモ更新",
+      });
+    });
+
+    waitFor(async () => {
+      expect(await screen.findByText("メモ更新")).toBeInTheDocument();
+    });
   });
 });
