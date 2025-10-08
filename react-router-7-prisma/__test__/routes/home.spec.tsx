@@ -54,18 +54,24 @@ const prefectures = [
 ];
 
 describe("loader", () => {
-  test("prefecturesが返される", async () => {
+  test("prefecturesとvisitsが返される", async () => {
     vi.resetModules();
     vi.mock("../../app/lib/prisma", () => ({
       default: {
         prefectures: {
           findMany: vi.fn().mockResolvedValue(prefectures),
         },
+        visits: {
+          findMany: vi
+            .fn()
+            .mockResolvedValue([prefectures[0].id, prefectures[46].id]),
+        },
       },
     }));
     const { loader } = await import("../../app/routes/home");
     const data = await loader();
     expect(data.prefectures).toEqual(prefectures);
+    expect(data.visits).toEqual([prefectures[0].id, prefectures[46].id]);
   });
 });
 
@@ -79,6 +85,7 @@ describe("初期画面表示", async () => {
       loader: async () => {
         return {
           prefectures,
+          visits: [],
         };
       },
       children: [
@@ -117,4 +124,35 @@ describe("初期画面表示", async () => {
       expect(await screen.findByText(prefectureName)).toBeInTheDocument();
     }
   );
+
+  test("訪れたことのある都道府県は緑色で表示される", async () => {
+    const visitedIds = [prefectures[0].id, prefectures[5].id];
+
+    const LoaderStub = createRoutesStub([
+      {
+        path: "/",
+        Component: Home,
+        loader: async () => {
+          return {
+            prefectures,
+            visitedIds,
+          };
+        },
+      },
+    ]);
+    render(<LoaderStub initialEntries={["/"]} />);
+    const items = await screen.findAllByRole("listitem");
+    for (const li of items) {
+      const id = Number(li.getAttribute("data-prefecture-id"));
+      const link = li.querySelector("a")!;
+      const span = li.querySelector("span")!;
+      if (visitedIds.includes(id)) {
+        expect(link).toHaveClass("bg-[#009119]");
+        expect(span).toHaveClass("text-white");
+      } else {
+        expect(link).toHaveClass("bg-gray-200");
+        expect(span).toHaveClass("text-black");
+      }
+    }
+  });
 });

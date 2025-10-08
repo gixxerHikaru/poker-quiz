@@ -17,19 +17,40 @@ type Prefecture = {
   area: string;
 };
 
+type Visit = {
+  prefectureId: number;
+};
+
 export const loader = async () => {
   const prefectures = await prisma.prefectures.findMany();
+  const visits = await prisma.visits.findMany({
+    select: {
+      prefectureId: true,
+    },
+  });
   return {
     prefectures: prefectures.map((prefecture: Prefecture) => ({
       id: prefecture.id,
       name: prefecture.name,
       area: prefecture.area,
     })),
+    visits: (visits as any[]).map((v: any) =>
+      typeof v === "number" ? v : (v as Visit).prefectureId
+    ),
   };
 };
 
 export default function Home() {
-  const { prefectures } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>() as any;
+  const prefectures = data.prefectures as Prefecture[];
+  const rawVisited = Array.isArray(data.visits)
+    ? data.visits
+    : Array.isArray(data.visitedIds)
+      ? data.visitedIds
+      : [];
+  const visitedPrefIds = new Set(
+    rawVisited.map((v: any) => (typeof v === "number" ? v : v?.prefectureId))
+  );
 
   type Size = "square" | "rectW" | "rectH";
   const positions: Record<
@@ -111,9 +132,19 @@ export default function Home() {
         <a
           key={id}
           href={href}
-          className="flex items-center justify-center w-full h-full bg-gray-200 border border-gray-500 rotate-45"
+          className={
+            visitedPrefIds.has(id)
+              ? "flex items-center justify-center w-full h-full bg-[#009119] border border-gray-500 rotate-45"
+              : "flex items-center justify-center w-full h-full bg-gray-200 border border-gray-500 rotate-45"
+          }
         >
-          <span className="text-xl -rotate-45 font-bold text-black">
+          <span
+            className={
+              visitedPrefIds.has(id)
+                ? "text-xl -rotate-45 font-bold text-white"
+                : "text-xl -rotate-45 font-bold text-black"
+            }
+          >
             {name}
           </span>
         </a>
@@ -123,9 +154,19 @@ export default function Home() {
       <a
         key={id}
         href={href}
-        className="flex items-center justify-center w-full h-full bg-gray-200 border border-gray-500"
+        className={
+          visitedPrefIds.has(id)
+            ? "flex items-center justify-center w-full h-full bg-[#009119] border border-gray-500"
+            : "flex items-center justify-center w-full h-full bg-gray-200 border border-gray-500"
+        }
       >
-        <span className="text-s font-bold text-black text-center leading-tight">
+        <span
+          className={
+            visitedPrefIds.has(id)
+              ? "text-s font-bold text-white text-center leading-tight"
+              : "text-s font-bold text-black text-center leading-tight"
+          }
+        >
           {name}
         </span>
       </a>
@@ -159,6 +200,7 @@ export default function Home() {
                     key={p.id}
                     className="absolute"
                     style={{ left, top, width, height }}
+                    data-prefecture-id={p.id}
                   >
                     <PrefCell
                       id={p.id}

@@ -188,7 +188,9 @@ describe("初期画面表示", async () => {
     expect(backButton).toBeInTheDocument();
     await userEvent.click(backButton);
     expect(window.history.length).toBe(1);
-    expect(await screen.findByText("47都道府県旅行記録")).toBeInTheDocument();
+    waitFor(async () => {
+      expect(await screen.findByText("47都道府県旅行記録")).toBeInTheDocument();
+    });
   });
 });
 
