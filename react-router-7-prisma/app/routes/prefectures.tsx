@@ -135,7 +135,7 @@ export default function Prefectures() {
 
   return (
     <>
-      <div className="w-full min-h-screen flex justify-center bg-[#2580C3]">
+      <div className="w-full min-h-screen flex justify-center bg-[#35a0ee]">
         <MainBar>
           <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">
             47都道府県旅行記録

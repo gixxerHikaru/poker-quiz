@@ -134,12 +134,14 @@ export default function Home() {
 
   return (
     <>
-      <div className="w-full min-h-screen flex justify-center bg-[#2580C3]">
+      <div className="w-full min-h-screen flex justify-center bg-[#35a0ee]">
         <div className="w-full max-w-[1440px] h-[1024px] relative">
           <MainBar>
-            <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">47都道府県旅行記録</h1>
+            <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">
+              47都道府県旅行記録
+            </h1>
           </MainBar>
-          <div className="absolute left-0 top-[150px] w-full h-[824px] bg-[#2580C3]">
+          <div className="absolute left-0 top-[150px] w-full h-[824px] bg-[#35a0ee]">
             <ul className="relative w-full h-full">
               {prefectures.map((p) => {
                 const pos = positions[p.name as keyof typeof positions];
