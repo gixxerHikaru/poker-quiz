@@ -127,13 +127,11 @@ export default function Prefectures() {
     normalizeToDateInput(visit?.visitToDate)
   );
   const [memo, setMemo] = useState<string>(visit?.memo || "");
-
   useEffect(() => {
     if (fromDate && !toDate) {
       setToDate(fromDate);
     }
   }, [fromDate, toDate]);
-
   useEffect(() => {
     if (toDate && !fromDate) {
       setFromDate(toDate);

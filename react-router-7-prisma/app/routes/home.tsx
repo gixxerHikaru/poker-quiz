@@ -107,14 +107,11 @@ export default function Home() {
     沖縄県: { row: 11, col: -4.5, size: "square" },
   };
 
-  // セルサイズは画面に応じて動的にスケール
   const [cell, setCell] = useState(50);
   const GAP = 0;
   const OFFSET_X = 420;
-  // 形状係数（セルに対する比率で扱う）
-  const rectExtraRatio = 0.32; // 縦長セルの追加高さ: 以前の +16px / 50px ≒ 0.32
-  const diamondFactor = 1.5; // ダイヤ型の一辺倍率
-  // 画面サイズに応じて上下中央に寄せるための動的オフセット
+  const rectExtraRatio = 0.32;
+  const diamondFactor = 1.5;
   const [offsetY, setOffsetY] = useState(4);
 
   const posToXY = (row: number, col: number) => ({
@@ -122,12 +119,10 @@ export default function Home() {
     top: offsetY + (row - 1) * (cell + GAP),
   });
 
-  // セルサイズを画面高に合わせて計算（縦位置は上固定にするため offsetY は一定）
   useEffect(() => {
     const computeLayout = () => {
       if (typeof window === "undefined") return;
-      const AVAILABLE_H = window.innerHeight - 80 - 50; // MainBar(80) + EndBar(50)
-      // まず単位（セル=1）でのマップ高さを求める（rectH は 1 + rectExtraRatio、ダイヤは diamondFactor）
+      const AVAILABLE_H = window.innerHeight - 80 - 50;
       let minTopUnits = Infinity;
       let maxBottomUnits = -Infinity;
       for (const key in positions) {
@@ -140,16 +135,13 @@ export default function Home() {
         maxBottomUnits = Math.max(maxBottomUnits, baseTopUnits + hUnits);
       }
       const mapUnitsHeight = Math.max(0, maxBottomUnits - minTopUnits);
-      // 高さに基づき目標セルサイズを計算（少し余白を持たせるために0.96係数）
       const targetCellFromH = Math.floor(
         (AVAILABLE_H * 0.96) / (mapUnitsHeight || 1)
       );
-      // セルサイズの上下限（見やすさ担保）
       const MIN_CELL = 40;
       const MAX_CELL = 64;
       const nextCell = Math.max(MIN_CELL, Math.min(MAX_CELL, targetCellFromH));
       setCell(nextCell);
-      // 縦位置は上固定: 固定のマージンに設定（必要に応じて調整可）
       setOffsetY(8);
     };
     computeLayout();
