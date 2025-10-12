@@ -119,9 +119,9 @@ describe("初期画面表示", async () => {
     async ({ prefectureName }) => {
       render(<Stub initialEntries={["/"]} />);
       const prefectureNameLink = await screen.findByText(prefectureName);
-      expect(prefectureNameLink).toBeInTheDocument();
+      expect(prefectureNameLink);
       await userEvent.click(prefectureNameLink);
-      expect(await screen.findByText(prefectureName)).toBeInTheDocument();
+      expect(await screen.findByText(prefectureName));
     }
   );
 

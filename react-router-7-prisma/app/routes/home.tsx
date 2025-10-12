@@ -1,6 +1,7 @@
 import type { Route } from "./+types/home";
 import prisma from "../lib/prisma";
 import { useLoaderData } from "react-router";
+import { useEffect, useState } from "react";
 import MainBar from "../components/MainBar";
 import EndBar from "../components/EndBar";
 
@@ -57,14 +58,14 @@ export default function Home() {
     string,
     { row: number; col: number; diamond?: boolean; size?: Size }
   > = {
-    北海道: { row: 1, col: 10.2, diamond: true, size: "square" },
+    北海道: { row: 1.3, col: 10.3, diamond: true, size: "square" },
     青森県: { row: 3, col: 10, size: "rectW" },
     秋田県: { row: 4, col: 10, size: "rectH" },
     岩手県: { row: 4, col: 11, size: "rectH" },
     山形県: { row: 5.3, col: 10, size: "square" },
     宮城県: { row: 5.3, col: 11, size: "square" },
     福島県: { row: 6.3, col: 10, size: "rectW" },
-    新潟県: { row: 7, col: 9, size: "rectH" },
+    新潟県: { row: 6, col: 9, size: "rectH" },
     群馬県: { row: 7.3, col: 10, size: "square" },
     栃木県: { row: 7.3, col: 11, size: "square" },
     茨城県: { row: 7.3, col: 12, size: "square" },
@@ -73,48 +74,88 @@ export default function Home() {
     東京都: { row: 9.3, col: 10, size: "rectW" },
     神奈川県: { row: 10.3, col: 10, size: "rectW" },
     長野県: { row: 8.3, col: 9, size: "square" },
-    山梨県: { row: 9.3, col: 9, size: "square" },
-    静岡県: { row: 10.3, col: 8, size: "rectW" },
-    富山県: { row: 8.3, col: 8, size: "square" },
-    石川県: { row: 8, col: 7, size: "rectH" },
-    福井県: { row: 9.3, col: 7, size: "square" },
-    岐阜県: { row: 9.3, col: 8, size: "square" },
-    愛知県: { row: 10.3, col: 7, size: "square" },
-    三重県: { row: 9.3, col: 6, size: "square" },
-    滋賀県: { row: 8.3, col: 6, size: "square" },
-    京都府: { row: 8.3, col: 5, size: "square" },
-    奈良県: { row: 9.3, col: 5, size: "square" },
-    大阪府: { row: 9.3, col: 4, size: "square" },
-    和歌山県: { row: 10.3, col: 4, size: "rectW" },
-    兵庫県: { row: 8.3, col: 3, size: "rectW" },
-    鳥取県: { row: 7.3, col: 2, size: "square" },
-    島根県: { row: 7.3, col: 1, size: "square" },
-    岡山県: { row: 8.3, col: 2, size: "square" },
-    広島県: { row: 8.3, col: 1, size: "square" },
-    山口県: { row: 8.3, col: 0, size: "square" },
-    香川県: { row: 10.3, col: 2.5, size: "square" },
-    徳島県: { row: 11.3, col: 2.5, size: "square" },
-    愛媛県: { row: 10.3, col: 1.5, size: "square" },
-    高知県: { row: 11.3, col: 1.5, size: "square" },
-    福岡県: { row: 9.3, col: -1, size: "square" },
-    佐賀県: { row: 9.3, col: -2, size: "square" },
-    長崎県: { row: 10.3, col: -2, size: "rectH" },
-    大分県: { row: 9.8, col: 0, size: "square" },
-    熊本県: { row: 10.3, col: -1, size: "square" },
-    宮崎県: { row: 11.3, col: -1, size: "square" },
-    鹿児島県: { row: 11.6, col: -3, size: "rectW" },
-    沖縄県: { row: 12, col: -4.5, size: "square" },
+    山梨県: { row: 7.3, col: 9, size: "square" },
+    静岡県: { row: 9.3, col: 8, size: "rectW" },
+    富山県: { row: 7.3, col: 8, size: "square" },
+    石川県: { row: 7, col: 7, size: "rectH" },
+    福井県: { row: 8.3, col: 7, size: "square" },
+    岐阜県: { row: 8.3, col: 8, size: "square" },
+    愛知県: { row: 9.3, col: 7, size: "square" },
+    三重県: { row: 8.3, col: 6, size: "square" },
+    滋賀県: { row: 7.3, col: 6, size: "square" },
+    京都府: { row: 7.3, col: 5, size: "square" },
+    奈良県: { row: 8.3, col: 5, size: "square" },
+    大阪府: { row: 8.3, col: 4, size: "square" },
+    和歌山県: { row: 9.3, col: 4, size: "rectW" },
+    兵庫県: { row: 7.3, col: 3, size: "rectW" },
+    鳥取県: { row: 6.6, col: 2, size: "square" },
+    島根県: { row: 6.6, col: 1, size: "square" },
+    岡山県: { row: 7.6, col: 2, size: "square" },
+    広島県: { row: 7.6, col: 1, size: "square" },
+    山口県: { row: 7.3, col: 0, size: "square" },
+    香川県: { row: 9.3, col: 2.5, size: "square" },
+    徳島県: { row: 10.3, col: 2.5, size: "square" },
+    愛媛県: { row: 9.3, col: 1.5, size: "square" },
+    高知県: { row: 10.3, col: 1.5, size: "square" },
+    福岡県: { row: 8.3, col: -1, size: "square" },
+    佐賀県: { row: 8.3, col: -2, size: "square" },
+    長崎県: { row: 9.3, col: -2, size: "rectH" },
+    大分県: { row: 8.8, col: 0, size: "square" },
+    熊本県: { row: 9.3, col: -1, size: "square" },
+    宮崎県: { row: 10.3, col: -1, size: "square" },
+    鹿児島県: { row: 10.6, col: -3, size: "rectW" },
+    沖縄県: { row: 11, col: -4.5, size: "square" },
   };
 
-  const CELL = 60;
+  // セルサイズは画面に応じて動的にスケール
+  const [cell, setCell] = useState(50);
   const GAP = 0;
-  const OFFSET_X = 370;
-  const OFFSET_Y = 50;
+  const OFFSET_X = 420;
+  // 形状係数（セルに対する比率で扱う）
+  const rectExtraRatio = 0.32; // 縦長セルの追加高さ: 以前の +16px / 50px ≒ 0.32
+  const diamondFactor = 1.5; // ダイヤ型の一辺倍率
+  // 画面サイズに応じて上下中央に寄せるための動的オフセット
+  const [offsetY, setOffsetY] = useState(4);
 
   const posToXY = (row: number, col: number) => ({
-    left: OFFSET_X + (col - 1) * (CELL + GAP),
-    top: OFFSET_Y + (row - 1) * (CELL + GAP),
+    left: OFFSET_X + (col - 1) * (cell + GAP),
+    top: offsetY + (row - 1) * (cell + GAP),
   });
+
+  // セルサイズを画面高に合わせて計算（縦位置は上固定にするため offsetY は一定）
+  useEffect(() => {
+    const computeLayout = () => {
+      if (typeof window === "undefined") return;
+      const AVAILABLE_H = window.innerHeight - 80 - 50; // MainBar(80) + EndBar(50)
+      // まず単位（セル=1）でのマップ高さを求める（rectH は 1 + rectExtraRatio、ダイヤは diamondFactor）
+      let minTopUnits = Infinity;
+      let maxBottomUnits = -Infinity;
+      for (const key in positions) {
+        const pos = positions[key as keyof typeof positions];
+        const baseTopUnits = pos.row - 1;
+        let hUnits = 1;
+        if (pos.size === "rectH") hUnits = 1 + rectExtraRatio;
+        if (pos.diamond) hUnits = diamondFactor;
+        minTopUnits = Math.min(minTopUnits, baseTopUnits);
+        maxBottomUnits = Math.max(maxBottomUnits, baseTopUnits + hUnits);
+      }
+      const mapUnitsHeight = Math.max(0, maxBottomUnits - minTopUnits);
+      // 高さに基づき目標セルサイズを計算（少し余白を持たせるために0.96係数）
+      const targetCellFromH = Math.floor(
+        (AVAILABLE_H * 0.96) / (mapUnitsHeight || 1)
+      );
+      // セルサイズの上下限（見やすさ担保）
+      const MIN_CELL = 40;
+      const MAX_CELL = 64;
+      const nextCell = Math.max(MIN_CELL, Math.min(MAX_CELL, targetCellFromH));
+      setCell(nextCell);
+      // 縦位置は上固定: 固定のマージンに設定（必要に応じて調整可）
+      setOffsetY(8);
+    };
+    computeLayout();
+    window.addEventListener("resize", computeLayout);
+    return () => window.removeEventListener("resize", computeLayout);
+  }, [GAP, rectExtraRatio, diamondFactor]);
 
   const PrefCell = ({
     id,
@@ -175,25 +216,22 @@ export default function Home() {
 
   return (
     <>
-      <div className="w-full min-h-screen flex justify-center bg-[#35a0ee]">
-        <div className="w-full max-w-[1440px] h-[1024px] relative">
-          <MainBar>
-            <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">
-              47都道府県旅行記録
-            </h1>
-          </MainBar>
-          <div className="absolute left-0 top-[150px] w-full h-[824px] bg-[#35a0ee]">
+      <div className="w-full h-screen overflow-hidden flex justify-center bg-[#35a0ee]">
+        <div className="w-full max-w-[1440px] h-full relative">
+          <MainBar />
+          <div className="absolute left-0 top-[80px] w-full h-[calc(100dvh-80px-50px)] bg-[#35a0ee] overflow-hidden">
             <ul className="relative w-full h-full">
               {prefectures.map((p) => {
                 const pos = positions[p.name as keyof typeof positions];
                 if (!pos) return null;
                 const { left, top } = posToXY(pos.row, pos.col);
                 const size = pos.size ?? "square";
-                let width = size === "rectW" ? CELL * 2 : CELL;
-                let height = size === "rectH" ? CELL + 20 : CELL;
+                let width = size === "rectW" ? cell * 2 : cell;
+                let height =
+                  size === "rectH" ? cell * (1 + rectExtraRatio) : cell;
                 if (pos.diamond) {
-                  width = CELL * 1.8;
-                  height = CELL * 1.8;
+                  width = cell * diamondFactor;
+                  height = cell * diamondFactor;
                 }
                 return (
                   <li

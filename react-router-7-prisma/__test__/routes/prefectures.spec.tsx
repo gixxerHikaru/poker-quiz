@@ -269,53 +269,55 @@ describe("入力フォーム", async () => {
     });
   });
 
-  test("必須項目を入力しないと action に formData が渡らない", async () => {
-    render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
+  describe("エラー系", () => {
+    test("必須項目を入力しないと action に formData が渡らない", async () => {
+      render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
 
-    const fromInput = await screen.findByLabelText("訪問日");
-    const toInput = await screen.findByLabelText("帰宅日");
-    const submit = await screen.findByRole("button", { name: "登録" });
+      const fromInput = await screen.findByLabelText("訪問日");
+      const toInput = await screen.findByLabelText("帰宅日");
+      const submit = await screen.findByRole("button", { name: "登録" });
 
-    await userEvent.clear(fromInput);
-    await userEvent.clear(toInput);
-    await userEvent.click(submit);
+      await userEvent.clear(fromInput);
+      await userEvent.clear(toInput);
+      await userEvent.click(submit);
 
-    waitFor(() => {
-      expect(action).toHaveBeenCalledTimes(0);
+      waitFor(() => {
+        expect(action).toHaveBeenCalledTimes(0);
+      });
+
+      waitFor(() => {
+        expect(capturedFormData).toEqual(null);
+      });
     });
 
-    waitFor(() => {
-      expect(capturedFormData).toEqual(null);
+    test("訪問日が帰宅日より後になるとエラーメッセージが表示される", async () => {
+      render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
+
+      const fromInput = await screen.findByLabelText("訪問日");
+      const toInput = await screen.findByLabelText("帰宅日");
+
+      await userEvent.clear(fromInput);
+      await userEvent.type(fromInput, "2025-09-12");
+      await userEvent.clear(toInput);
+      await userEvent.type(toInput, "2025-09-10");
+
+      expect(await screen.findByText("訪問日が帰宅日より後です"));
     });
-  });
 
-  test("訪問日が帰宅日より後になるとエラーメッセージが表示される", async () => {
-    render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
+    test("エラーメッセージが表示されているとき、登録ボタンが押せない", async () => {
+      render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
 
-    const fromInput = await screen.findByLabelText("訪問日");
-    const toInput = await screen.findByLabelText("帰宅日");
+      const fromInput = await screen.findByLabelText("訪問日");
+      const toInput = await screen.findByLabelText("帰宅日");
+      const submit = await screen.findByRole("button", { name: "登録" });
 
-    await userEvent.clear(fromInput);
-    await userEvent.type(fromInput, "2025-09-12");
-    await userEvent.clear(toInput);
-    await userEvent.type(toInput, "2025-09-10");
+      await userEvent.clear(fromInput);
+      await userEvent.type(fromInput, "2025-09-12");
+      await userEvent.clear(toInput);
+      await userEvent.type(toInput, "2025-09-10");
 
-    expect(await screen.findByText("訪問日が帰宅日より後です"));
-  });
-
-  test("エラーメッセージが表示されているとき、登録ボタンが押せない", async () => {
-    render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
-
-    const fromInput = await screen.findByLabelText("訪問日");
-    const toInput = await screen.findByLabelText("帰宅日");
-    const submit = await screen.findByRole("button", { name: "登録" });
-
-    await userEvent.clear(fromInput);
-    await userEvent.type(fromInput, "2025-09-12");
-    await userEvent.clear(toInput);
-    await userEvent.type(toInput, "2025-09-10");
-
-    expect(submit).toBeDisabled();
+      expect(submit).toBeDisabled();
+    });
   });
 
   test("既に旅行が記録してあるところにメモだけ書き換えても画面が更新される", async () => {

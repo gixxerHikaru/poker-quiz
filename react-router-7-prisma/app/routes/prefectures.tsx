@@ -136,21 +136,9 @@ export default function Prefectures() {
   return (
     <>
       <div className="w-full min-h-screen flex justify-center bg-[#35a0ee]">
-        <MainBar>
-          <h1 className="font-bold text-[40px] md:text-[64px] leading-[1.1] text-black">
-            47都道府県旅行記録
-          </h1>
-        </MainBar>
-        <div className="w-full max-w-[960px] mx-auto px-4 pt-[180px] pb-[80px]">
+        <MainBar />
+        <div className="w-full max-w-[960px] mx-auto px-4 pt-[80px] pb-[80px]">
           <div className="mb-6">
-            <div className="flex justify-end">
-              <Link
-                to="/"
-                className="text-sm px-4 py-2 rounded-md bg-white/90 hover:bg-white text-[#111] border border-black/20"
-              >
-                トップへ戻る
-              </Link>
-            </div>
             <h1 className="mt-3 text-3xl font-bold text-white text-center">
               {prefectureName}
             </h1>
@@ -241,6 +229,16 @@ export default function Prefectures() {
                 </button>
               </div>
             </form>
+          </div>
+          <div className="mt-6">
+            <div className="flex justify-end">
+              <Link
+                to="/"
+                className="text-sm px-4 py-2 rounded-md bg-white/90 hover:bg-white text-[#111] border border-black/20"
+              >
+                トップへ戻る
+              </Link>
+            </div>
           </div>
         </div>
         <EndBar />
