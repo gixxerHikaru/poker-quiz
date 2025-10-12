@@ -239,6 +239,26 @@ describe("入力フォーム", async () => {
     expect((toInput as HTMLInputElement).value).toBe("");
   });
 
+  test("帰宅日が空白の時、訪問日に日付を入力すると、帰宅日に同じ日付が入力される", async () => {
+    render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+    const fromInput = await screen.findByLabelText("訪問日");
+    const toInput = await screen.findByLabelText("帰宅日");
+    await userEvent.clear(fromInput);
+    expect((fromInput as HTMLInputElement).value).toBe("");
+    await userEvent.type(fromInput, "2025-09-10");
+    expect((toInput as HTMLInputElement).value).toBe("2025-09-10");
+  });
+
+  test("訪問日が空白の時、帰宅日に日付を入力すると、訪問日に同じ日付が入力される", async () => {
+    render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+    const fromInput = await screen.findByLabelText("訪問日");
+    const toInput = await screen.findByLabelText("帰宅日");
+    await userEvent.clear(toInput);
+    expect((fromInput as HTMLInputElement).value).toBe("");
+    await userEvent.type(toInput, "2025-09-10");
+    expect((fromInput as HTMLInputElement).value).toBe("2025-09-10");
+  });
+
   test("必須項目を入力して送信すると action に formData が渡る", async () => {
     render(<ActionStub initialEntries={[`/prefectures/47/沖縄県`]} />);
 
@@ -300,8 +320,9 @@ describe("入力フォーム", async () => {
       await userEvent.type(fromInput, "2025-09-12");
       await userEvent.clear(toInput);
       await userEvent.type(toInput, "2025-09-10");
-
-      expect(await screen.findByText("訪問日が帰宅日より後です"));
+      waitFor(async () => {
+        expect(await screen.findByText("訪問日が帰宅日より後です"));
+      });
     });
 
     test("エラーメッセージが表示されているとき、登録ボタンが押せない", async () => {
@@ -316,7 +337,9 @@ describe("入力フォーム", async () => {
       await userEvent.clear(toInput);
       await userEvent.type(toInput, "2025-09-10");
 
-      expect(submit).toBeDisabled();
+      waitFor(async () => {
+        expect(submit).toBeDisabled();
+      });
     });
   });
 

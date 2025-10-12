@@ -1,7 +1,7 @@
 import { useParams, useLoaderData, Link } from "react-router";
 import prisma from "../lib/prisma";
 import type { Route } from "./+types/prefectures";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import MainBar from "~/components/MainBar";
 import EndBar from "~/components/EndBar";
 
@@ -22,7 +22,7 @@ type LoaderData = {
     prefectureId: number;
     visitFromDate: string;
     visitToDate: string;
-    memo: string;
+    memo: string | null;
   } | null;
 };
 
@@ -127,6 +127,18 @@ export default function Prefectures() {
     normalizeToDateInput(visit?.visitToDate)
   );
   const [memo, setMemo] = useState<string>(visit?.memo || "");
+
+  useEffect(() => {
+    if (fromDate && !toDate) {
+      setToDate(fromDate);
+    }
+  }, [fromDate, toDate]);
+
+  useEffect(() => {
+    if (toDate && !fromDate) {
+      setFromDate(toDate);
+    }
+  }, [toDate, fromDate]);
 
   const isRangeInvalid = useMemo(() => {
     if (!fromDate || !toDate) return false;
