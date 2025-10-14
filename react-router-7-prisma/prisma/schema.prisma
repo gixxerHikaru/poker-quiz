@@ -28,4 +28,15 @@ model Visits {
   prefectureId Int
   memo String?
   prefecture Prefectures @relation(fields: [prefectureId], references: [id])
+  images Images[]
+}
+
+model Images {
+  id Int @id @default(autoincrement())
+  visitId Int
+  path String
+
+  visit Visits @relation(fields: [visitId], references: [id])
+
+  @@index([visitId])
 }

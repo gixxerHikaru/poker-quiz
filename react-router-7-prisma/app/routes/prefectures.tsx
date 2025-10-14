@@ -23,6 +23,11 @@ type LoaderData = {
     visitFromDate: string;
     visitToDate: string;
     memo: string | null;
+    images?: {
+      id: number;
+      visitId: number;
+      path: string;
+    }[];
   } | null;
 };
 
@@ -93,6 +98,9 @@ export const loader = async ({
     where: { prefectureId },
     orderBy: { visitToDate: "desc" },
   });
+  const images = await prisma.images.findMany({
+    where: { visitId: visit?.id },
+  });
   return {
     visit: visit
       ? {
@@ -101,6 +109,7 @@ export const loader = async ({
           visitFromDate: visit.visitFromDate.toISOString(),
           visitToDate: visit.visitToDate.toISOString(),
           memo: visit.memo,
+          images,
         }
       : null,
   };
@@ -165,6 +174,18 @@ export default function Prefectures() {
               </div>
               <div className="font-semibold">メモ(行ったところ等)</div>
               <div className="md:col-span-2">{visit?.memo ?? "-"}</div>
+              <div className="font-semibold">写真</div>
+              {visit?.images && visit.images.length > 0 && (
+                <>
+                  <div className="md:col-span-2">
+                    <img
+                      src={visit.images[0].path}
+                      alt="訪問画像"
+                      className="max-h-48 rounded-md border border-black/10"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
