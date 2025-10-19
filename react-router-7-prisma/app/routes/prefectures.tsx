@@ -2,6 +2,8 @@ import { useParams, useLoaderData, Link } from "react-router";
 import prisma from "../lib/prisma";
 import type { Route } from "./+types/prefectures";
 import { useMemo, useState, useEffect } from "react";
+import path from "path";
+import { promises as fs } from "fs";
 import MainBar from "~/components/MainBar";
 import EndBar from "~/components/EndBar";
 
@@ -14,6 +16,7 @@ type submitData = {
   visitFromDate: string;
   visitToDate: string;
   memo: string;
+  images: string;
 };
 
 type LoaderData = {
@@ -39,6 +42,7 @@ export async function action({
   const visitFromDateRaw = formData.get("visitFromDate");
   const visitToDateRaw = formData.get("visitToDate");
   const memoRaw = formData.get("memo");
+  const imageInput = formData.get("images");
 
   if (
     typeof prefectureIdRaw !== "string" ||
@@ -56,6 +60,25 @@ export async function action({
   const prefectureId = Number(prefectureIdRaw);
   const visitFromDate = new Date(visitFromDateRaw);
   const visitToDate = new Date(visitToDateRaw);
+  let imagePath: string | null = null;
+  if (
+    imageInput &&
+    typeof imageInput === "object" &&
+    "arrayBuffer" in imageInput
+  ) {
+    const file = imageInput as File;
+    if (file.size > 0) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const uploadDir = path.join(process.cwd(), "public", "trip_images");
+      await fs.mkdir(uploadDir, { recursive: true });
+      const ext = path.extname(file.name) || ".bin";
+      const base = path.basename(file.name, ext) || "image";
+      const filename = `${base}-${Date.now()}${ext}`;
+      const fullPath = path.join(uploadDir, filename);
+      await fs.writeFile(fullPath, buffer);
+      imagePath = `/trip_images/${filename}`;
+    }
+  }
 
   const existing = await prisma.visits.findFirst({
     where: {
@@ -75,8 +98,16 @@ export async function action({
         visitToDate,
       },
     });
+    if (imagePath) {
+      await prisma.images.create({
+        data: {
+          visitId: existing.id,
+          path: imagePath,
+        },
+      });
+    }
   } else {
-    await prisma.visits.create({
+    const created = await prisma.visits.create({
       data: {
         prefectureId,
         visitFromDate,
@@ -84,6 +115,14 @@ export async function action({
         memo: memoRaw,
       },
     });
+    if (imagePath) {
+      await prisma.images.create({
+        data: {
+          visitId: created.id,
+          path: imagePath,
+        },
+      });
+    }
   }
   return {
     success: true,
@@ -152,6 +191,24 @@ export default function Prefectures() {
     return toDate < fromDate;
   }, [fromDate, toDate]);
 
+  const resolveImageSrc = (raw: string) => {
+    if (!raw) return "";
+    const path = raw.trim();
+    if (/^https?:\/\//.test(path)) return path;
+    if (path.startsWith("/")) return path;
+
+    const marker = "trip_images/";
+    let filePart = path;
+    const idx = path.lastIndexOf(marker);
+    if (idx !== -1) {
+      filePart = path.slice(idx + marker.length);
+    } else {
+      const parts = path.split("/");
+      filePart = parts[parts.length - 1];
+    }
+    return `/trip_images/${filePart}`;
+  };
+
   return (
     <>
       <div className="w-full min-h-screen flex justify-center bg-[#35a0ee]">
@@ -179,7 +236,7 @@ export default function Prefectures() {
                 <>
                   <div className="md:col-span-2">
                     <img
-                      src={visit.images[0].path}
+                      src={resolveImageSrc(visit.images[0].path)}
                       alt="訪問画像"
                       className="max-h-48 rounded-md border border-black/10"
                     />
@@ -190,7 +247,11 @@ export default function Prefectures() {
           </div>
 
           <div className="bg-white border border-black/20 rounded-xl shadow-sm p-6 mt-6">
-            <form method="post" className="space-y-4">
+            <form
+              method="post"
+              encType="multipart/form-data"
+              className="space-y-4"
+            >
               <input type="hidden" name="prefectureId" value={prefectureId} />
               <div>
                 <label
@@ -241,6 +302,16 @@ export default function Prefectures() {
                   value={memo}
                   onChange={(e) => setMemo(e.currentTarget.value)}
                   placeholder="例: 食べたもの・行った場所"
+                />
+              </div>
+              <div className="mt-1 w-[330px]">
+                <label htmlFor="images">写真</label>
+                <input
+                  type="file"
+                  id="images"
+                  name="images"
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                  accept="image/*"
                 />
               </div>
               {isRangeInvalid && (

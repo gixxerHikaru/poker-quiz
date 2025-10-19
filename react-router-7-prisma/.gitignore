@@ -7,3 +7,5 @@
 /build/
 
 /app/generated/prisma
+
+/public/trip_images
