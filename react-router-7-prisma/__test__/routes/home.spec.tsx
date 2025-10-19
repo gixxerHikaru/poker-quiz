@@ -54,7 +54,7 @@ const prefectures = [
 ];
 
 describe("loader", () => {
-  test("prefecturesとvisitsが返される", async () => {
+  test("prefecturesとvisits、usersが返される", async () => {
     vi.resetModules();
     vi.mock("../../app/lib/prisma", () => ({
       default: {
@@ -66,12 +66,21 @@ describe("loader", () => {
             .fn()
             .mockResolvedValue([prefectures[0].id, prefectures[46].id]),
         },
+        users: {
+          findMany: vi
+            .fn()
+            .mockResolvedValue([
+              { id: 1, name: "user1" },
+              { id: 2, name: "user2" },
+            ]),
+        },
       },
     }));
     const { loader } = await import("../../app/routes/home");
     const data = await loader();
     expect(data.prefectures).toEqual(prefectures);
     expect(data.visits).toEqual([prefectures[0].id, prefectures[46].id]);
+    expect(data.users).toEqual(["user1", "user2"]);
   });
 });
 
@@ -86,6 +95,7 @@ describe("初期画面表示", async () => {
         return {
           prefectures,
           visits: [],
+          users: [],
         };
       },
       children: [
@@ -136,6 +146,7 @@ describe("初期画面表示", async () => {
           return {
             prefectures,
             visitedIds,
+            users: [],
           };
         },
       },
@@ -154,5 +165,28 @@ describe("初期画面表示", async () => {
         expect(span).toHaveClass("text-black");
       }
     }
+  });
+
+  describe("ユーザー切り替え", () => {
+    test("プルダウンからユーザーを切り替えられる", async () => {
+      const SelectStub = createRoutesStub([
+        {
+          path: "/",
+          Component: Home,
+          loader: async () => {
+            return {
+              prefectures,
+              visits: [],
+              users: ["user1", "user2"],
+            };
+          },
+        },
+      ]);
+      render(<SelectStub initialEntries={["/"]} />);
+      const select = await screen.findByRole("combobox");
+      expect(select).toHaveValue("user1");
+      await userEvent.selectOptions(select, "user2");
+      expect(await screen.findByText("user2")).toBeInTheDocument();
+    });
   });
 });

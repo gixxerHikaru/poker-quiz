@@ -22,6 +22,11 @@ type Visit = {
   prefectureId: number;
 };
 
+type User = {
+  id: number;
+  name: string;
+};
+
 export const loader = async () => {
   const prefectures = await prisma.prefectures.findMany();
   const visits = await prisma.visits.findMany({
@@ -29,6 +34,7 @@ export const loader = async () => {
       prefectureId: true,
     },
   });
+  const users = await prisma.users.findMany();
   return {
     prefectures: prefectures.map((prefecture: Prefecture) => ({
       id: prefecture.id,
@@ -38,6 +44,7 @@ export const loader = async () => {
     visits: (visits as any[]).map((v: any) =>
       typeof v === "number" ? v : (v as Visit).prefectureId
     ),
+    users: users.map((user: User) => user.name),
   };
 };
 
@@ -52,6 +59,7 @@ export default function Home() {
   const visitedPrefIds = new Set(
     rawVisited.map((v: any) => (typeof v === "number" ? v : v?.prefectureId))
   );
+  const users = data.users;
 
   type Size = "square" | "rectW" | "rectH";
   const positions: Record<
@@ -211,37 +219,48 @@ export default function Home() {
       <div className="w-full h-screen overflow-hidden flex justify-center bg-[#35a0ee]">
         <div className="w-full max-w-[1440px] h-full relative">
           <MainBar />
-          <div className="absolute left-0 top-[80px] w-full h-[calc(100dvh-80px-50px)] bg-[#35a0ee] overflow-hidden">
-            <ul className="relative w-full h-full">
-              {prefectures.map((p) => {
-                const pos = positions[p.name as keyof typeof positions];
-                if (!pos) return null;
-                const { left, top } = posToXY(pos.row, pos.col);
-                const size = pos.size ?? "square";
-                let width = size === "rectW" ? cell * 2 : cell;
-                let height =
-                  size === "rectH" ? cell * (1 + rectExtraRatio) : cell;
-                if (pos.diamond) {
-                  width = cell * diamondFactor;
-                  height = cell * diamondFactor;
-                }
-                return (
-                  <li
-                    key={p.id}
-                    className="absolute"
-                    style={{ left, top, width, height }}
-                    data-prefecture-id={p.id}
-                  >
-                    <PrefCell
-                      id={p.id}
-                      name={p.name}
-                      href={`/prefectures/${p.id}/${p.name}`}
-                      diamond={pos.diamond}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
+          <div className="absolute left-0 top-[80px] w-full h-[calc(100dvh-80px-50px)] bg-[#35a0ee]">
+            <div className="absolute left-[10px] top-0 w-full h-full text-white">
+              <select className="absolute left-0 top-0">
+                {(users as string[]).map((u) => (
+                  <option key={u} value={u}>
+                    {u}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="absolute left-[10px] top-[40px] w-full h-full">
+              <ul className="relative w-full h-full">
+                {prefectures.map((p) => {
+                  const pos = positions[p.name as keyof typeof positions];
+                  if (!pos) return null;
+                  const { left, top } = posToXY(pos.row, pos.col);
+                  const size = pos.size ?? "square";
+                  let width = size === "rectW" ? cell * 2 : cell;
+                  let height =
+                    size === "rectH" ? cell * (1 + rectExtraRatio) : cell;
+                  if (pos.diamond) {
+                    width = cell * diamondFactor;
+                    height = cell * diamondFactor;
+                  }
+                  return (
+                    <li
+                      key={p.id}
+                      className="absolute"
+                      style={{ left, top, width, height }}
+                      data-prefecture-id={p.id}
+                    >
+                      <PrefCell
+                        id={p.id}
+                        name={p.name}
+                        href={`/prefectures/${p.id}/${p.name}`}
+                        diamond={pos.diamond}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
           <EndBar />
         </div>

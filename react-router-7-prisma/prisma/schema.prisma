@@ -40,3 +40,8 @@ model Images {
 
   @@index([visitId])
 }
+
+model Users {
+  id Int @id @default(autoincrement())
+  name String
+}
