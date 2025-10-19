@@ -220,7 +220,7 @@ export default function Home() {
         <div className="w-full max-w-[1440px] h-full relative">
           <MainBar />
           <div className="absolute left-0 top-[80px] w-full h-[calc(100dvh-80px-50px)] bg-[#35a0ee]">
-            <div className="absolute left-[10px] top-0 w-full h-full text-white">
+            <div className="absolute left-[10px] top-0 w-full h-full text-white hidden">
               <select className="absolute left-0 top-0">
                 {(users as string[]).map((u) => (
                   <option key={u} value={u}>
@@ -229,7 +229,7 @@ export default function Home() {
                 ))}
               </select>
             </div>
-            <div className="absolute left-[10px] top-[40px] w-full h-full">
+            <div className="absolute left-[10px] top-0 w-full h-full">
               <ul className="relative w-full h-full">
                 {prefectures.map((p) => {
                   const pos = positions[p.name as keyof typeof positions];
