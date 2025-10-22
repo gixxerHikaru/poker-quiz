@@ -216,10 +216,50 @@ export default function Home() {
 
   return (
     <>
-      <div className="w-full h-screen overflow-hidden flex justify-center bg-[#35a0ee]">
+      <div className="w-full h-screen overflow-x-hidden overflow-y-auto md:overflow-hidden flex justify-center bg-[#35a0ee]">
         <div className="w-full max-w-[1440px] h-full relative">
           <MainBar />
-          <div className="absolute left-0 top-[80px] w-full h-[calc(100dvh-80px-50px)] bg-[#35a0ee]">
+          {/* Mobile layout: list/grid view */}
+          <div className="block md:hidden pt-[80px] pb-[50px] w-full">
+            <div className="px-3">
+              <div className="mb-3 hidden">
+                <select className="w-full rounded-md border border-black/30 px-3 py-2 bg-white text-black">
+                  {(users as string[]).map((u) => (
+                    <option key={u} value={u}>
+                      {u}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <ul className="grid grid-cols-2 gap-2">
+                {prefectures.map((p) => (
+                  <li key={p.id} data-prefecture-id={p.id}>
+                    <a
+                      href={`/prefectures/${p.id}/${p.name}`}
+                      className={
+                        visitedPrefIds.has(p.id)
+                          ? "block w-full text-center px-3 py-3 rounded-md bg-[#009119] border border-gray-500"
+                          : "block w-full text-center px-3 py-3 rounded-md bg-gray-200 border border-gray-500"
+                      }
+                    >
+                      <span
+                        className={
+                          visitedPrefIds.has(p.id)
+                            ? "font-bold text-white"
+                            : "font-bold text-black"
+                        }
+                      >
+                        {p.name}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Desktop layout: map view */}
+          <div className="hidden md:block absolute left-0 top-[80px] w-full h-[calc(100dvh-80px-50px)] bg-[#35a0ee]">
             <div className="absolute left-[10px] top-0 w-full h-full text-white hidden">
               <select className="absolute left-0 top-0">
                 {(users as string[]).map((u) => (
