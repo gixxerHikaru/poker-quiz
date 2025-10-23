@@ -7,8 +7,8 @@ import EndBar from "../components/EndBar";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "47都道府県旅行記録" },
+    { name: "description", content: "Welcome to 47都道府県旅行記録!" },
   ];
 }
 
