@@ -1,6 +1,6 @@
 import type { Route } from "./+types/home";
 import prisma from "../lib/prisma";
-import { useLoaderData } from "react-router";
+import { useLoaderData, Link, Outlet } from "react-router";
 import { useEffect, useState } from "react";
 import MainBar from "../components/MainBar";
 import EndBar from "../components/EndBar";
@@ -160,19 +160,19 @@ export default function Home() {
   const PrefCell = ({
     id,
     name,
-    href,
+    to,
     diamond,
   }: {
     id: number;
     name: string;
-    href: string;
+    to: string;
     diamond?: boolean;
   }) => {
     if (diamond) {
       return (
-        <a
+        <Link
           key={id}
-          href={href}
+          to={to}
           className={
             visitedPrefIds.has(id)
               ? "flex items-center justify-center w-full h-full bg-[#009119] border border-gray-500 rotate-45"
@@ -188,13 +188,13 @@ export default function Home() {
           >
             {name}
           </span>
-        </a>
+        </Link>
       );
     }
     return (
-      <a
+      <Link
         key={id}
-        href={href}
+        to={to}
         className={
           visitedPrefIds.has(id)
             ? "flex items-center justify-center w-full h-full bg-[#009119] border border-gray-500"
@@ -210,7 +210,7 @@ export default function Home() {
         >
           {name}
         </span>
-      </a>
+      </Link>
     );
   };
 
@@ -234,8 +234,8 @@ export default function Home() {
               <ul className="grid grid-cols-2 gap-2">
                 {prefectures.map((p) => (
                   <li key={p.id} data-prefecture-id={p.id}>
-                    <a
-                      href={`/prefectures/${p.id}/${p.name}`}
+                    <Link
+                      to={`/prefectures/${p.id}/${p.name}`}
                       className={
                         visitedPrefIds.has(p.id)
                           ? "block w-full text-center px-3 py-3 rounded-md bg-[#009119] border border-gray-500"
@@ -251,7 +251,7 @@ export default function Home() {
                       >
                         {p.name}
                       </span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -293,7 +293,7 @@ export default function Home() {
                       <PrefCell
                         id={p.id}
                         name={p.name}
-                        href={`/prefectures/${p.id}/${p.name}`}
+                        to={`/prefectures/${p.id}/${p.name}`}
                         diamond={pos.diamond}
                       />
                     </li>
@@ -302,6 +302,8 @@ export default function Home() {
               </ul>
             </div>
           </div>
+          {/* Nested routes will render here */}
+          <Outlet />
           <EndBar />
         </div>
       </div>
