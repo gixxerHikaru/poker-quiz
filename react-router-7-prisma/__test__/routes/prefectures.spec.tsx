@@ -159,39 +159,81 @@ describe("初期画面表示", async () => {
     expect(await screen.findByText("メモ書いてみた")).toBeInTheDocument();
   });
 
-  test("登録された画像を見ることができる", async () => {
-    const { default: Prefectures } = await import(
-      "../../app/routes/prefectures"
-    );
-    const Stub = createRoutesStub([
-      {
-        path: "/prefectures/:prefectureId/:prefectureName",
-        Component: Prefectures,
-        loader: () => {
-          return {
-            visit: {
-              id: 1,
-              prefectureId: 47,
-              visitFromDate: "2025-09-01",
-              visitToDate: "2025-09-01",
-              memo: "メモ書いてみた",
-              images: [
-                {
-                  id: 1,
-                  visitId: 1,
-                  path: "test.jpg",
-                },
-              ],
-            },
-          };
+  describe("画像表示", () => {
+    test("登録された画像を見ることができる", async () => {
+      const { default: Prefectures } = await import(
+        "../../app/routes/prefectures"
+      );
+      const Stub = createRoutesStub([
+        {
+          path: "/prefectures/:prefectureId/:prefectureName",
+          Component: Prefectures,
+          loader: () => {
+            return {
+              visit: {
+                id: 1,
+                prefectureId: 47,
+                visitFromDate: "2025-09-01",
+                visitToDate: "2025-09-01",
+                memo: "メモ書いてみた",
+                images: [
+                  {
+                    id: 1,
+                    visitId: 1,
+                    path: "test.jpg",
+                  },
+                ],
+              },
+            };
+          },
         },
-      },
-    ]);
-    render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
-    const imageElement = await screen.findByRole("img");
-    await expect(screen.findByRole("写真"));
-    expect(imageElement).toBeInTheDocument();
-    expect(imageElement).toHaveAttribute("alt");
+      ]);
+      render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+      const imageElement = await screen.findByRole("img");
+      await expect(screen.findByRole("写真"));
+      expect(imageElement).toBeInTheDocument();
+      expect(imageElement).toHaveAttribute("alt");
+    });
+
+    test("画像をクリックすると拡大表示し、枠外をクリックすると閉じる", async () => {
+      const { default: Prefectures } = await import(
+        "../../app/routes/prefectures"
+      );
+      const Stub = createRoutesStub([
+        {
+          path: "/prefectures/:prefectureId/:prefectureName",
+          Component: Prefectures,
+          loader: () => {
+            return {
+              visit: {
+                id: 1,
+                prefectureId: 47,
+                visitFromDate: "2025-09-01",
+                visitToDate: "2025-09-01",
+                memo: "メモ書いてみた",
+                images: [
+                  {
+                    id: 1,
+                    visitId: 1,
+                    path: "test.jpg",
+                  },
+                ],
+              },
+            };
+          },
+        },
+      ]);
+      render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+      const imageElement = await screen.findByRole("img");
+      await expect(screen.findByRole("写真"));
+      await userEvent.click(imageElement);
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+      expect(screen.getByRole("dialog")).toHaveAttribute("aria-modal", "true");
+
+      const outsideElement = screen.getByRole("dialog");
+      await userEvent.click(outsideElement);
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
   });
 
   test("トップへ戻るボタンを押すと、トップページに戻る", async () => {

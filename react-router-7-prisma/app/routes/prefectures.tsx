@@ -175,6 +175,8 @@ export default function Prefectures() {
     normalizeToDateInput(visit?.visitToDate)
   );
   const [memo, setMemo] = useState<string>(visit?.memo || "");
+  const [isImageOpen, setIsImageOpen] = useState(false);
+  const [modalImageSrc, setModalImageSrc] = useState("");
   useEffect(() => {
     if (fromDate && !toDate) {
       setToDate(fromDate);
@@ -238,7 +240,13 @@ export default function Prefectures() {
                     <img
                       src={resolveImageSrc(visit.images[0].path)}
                       alt="訪問画像"
-                      className="max-h-48 rounded-md border border-black/10"
+                      className="max-h-48 rounded-md border border-black/10 cursor-zoom-in"
+                      onClick={() => {
+                        setModalImageSrc(
+                          resolveImageSrc(visit?.images?.[0]?.path ?? "")
+                        );
+                        setIsImageOpen(true);
+                      }}
                     />
                   </div>
                 </>
@@ -345,6 +353,22 @@ export default function Prefectures() {
         </div>
         <EndBar />
       </div>
+      {isImageOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/70"
+          onClick={() => setIsImageOpen(false)}
+        >
+          <div className="max-w-[90vw] max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={modalImageSrc}
+              alt="拡大画像"
+              className="max-w-full max-h-[90vh] rounded-md shadow-lg"
+            />
+          </div>
+        </div>
+      )}
       {/* style tag scoped for calendar icon color on WebKit */}
       <style>{`
         input[type="date"]::-webkit-calendar-picker-indicator {
