@@ -360,7 +360,10 @@ export default function Prefectures() {
           className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/70"
           onClick={() => setIsImageOpen(false)}
         >
-          <div className="max-w-[90vw] max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
             <img
               src={modalImageSrc}
               alt="拡大画像"
