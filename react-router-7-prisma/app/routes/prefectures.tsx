@@ -35,14 +35,15 @@ export async function action({
   const prefectureIdRaw = formData.get("prefectureId");
   const visitFromDateRaw = formData.get("visitFromDate");
   const visitToDateRaw = formData.get("visitToDate");
+  const foodRaw = formData.get("food");
+  const activityRaw = formData.get("activity");
   const memoRaw = formData.get("memo");
   const imageInput = formData.get("images");
 
   if (
     typeof prefectureIdRaw !== "string" ||
     typeof visitFromDateRaw !== "string" ||
-    typeof visitToDateRaw !== "string" ||
-    typeof memoRaw !== "string"
+    typeof visitToDateRaw !== "string"
   ) {
     return { success: false };
   }
@@ -54,6 +55,9 @@ export async function action({
   const prefectureId = Number(prefectureIdRaw);
   const visitFromDate = new Date(visitFromDateRaw);
   const visitToDate = new Date(visitToDateRaw);
+  const food = typeof foodRaw === "string" ? foodRaw : null;
+  const activity = typeof activityRaw === "string" ? activityRaw : null;
+  const memo = typeof memoRaw === "string" ? memoRaw : null;
   let imagePath: string | null = null;
   if (
     imageInput &&
@@ -87,7 +91,9 @@ export async function action({
     await prisma.visits.update({
       where: { id: existing.id },
       data: {
-        memo: memoRaw,
+        food,
+        activity,
+        memo,
         visitFromDate,
         visitToDate,
       },
@@ -106,7 +112,9 @@ export async function action({
         prefectureId,
         visitFromDate,
         visitToDate,
-        memo: memoRaw,
+        food,
+        activity,
+        memo,
       },
     });
     if (imagePath) {
@@ -170,6 +178,8 @@ export default function Prefectures() {
   const [toDate, setToDate] = useState<string>(
     normalizeToDateInput(visit?.visitToDate)
   );
+  const [food, setFood] = useState<string>(visit?.food || "");
+  const [activity, setActivity] = useState<string>(visit?.activity || "");
   const [memo, setMemo] = useState<string>(visit?.memo || "");
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [modalImageSrc, setModalImageSrc] = useState("");
@@ -295,6 +305,43 @@ export default function Prefectures() {
                   required
                 />
               </div>
+
+              <div>
+                <label
+                  htmlFor="food"
+                  className="block text-sm font-bold text-black"
+                >
+                  食べたもの!
+                </label>
+                <input
+                  type="text"
+                  id="food"
+                  name="food"
+                  className="mt-1 w-full rounded-md border border-black/30 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black placeholder:text-black"
+                  value={food}
+                  onChange={(e) => setFood(e.currentTarget.value)}
+                  placeholder="例: 魚べい、資さんうどん、いっちょう"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="activity"
+                  className="block text-sm font-bold text-black"
+                >
+                  行った場所!
+                </label>
+                <input
+                  type="text"
+                  id="activity"
+                  name="activity"
+                  className="mt-1 w-full rounded-md border border-black/30 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black placeholder:text-black"
+                  value={activity}
+                  onChange={(e) => setActivity(e.currentTarget.value)}
+                  placeholder="例: 吹割の滝、伊香保温泉"
+                />
+              </div>
+
               <div>
                 <label
                   htmlFor="memo"

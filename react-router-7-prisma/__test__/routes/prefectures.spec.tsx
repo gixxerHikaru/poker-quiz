@@ -505,6 +505,8 @@ describe("入力フォーム", async () => {
 
     const fromInput = await screen.findByLabelText("訪問日");
     const toInput = await screen.findByLabelText("帰宅日");
+    const foodInput = await screen.findByLabelText("食べたもの!");
+    const activityInput = await screen.findByLabelText("行った場所!");
     const memoInput = await screen.findByLabelText("その他!!!");
     const submit = await screen.findByRole("button", { name: "登録" });
 
@@ -514,6 +516,10 @@ describe("入力フォーム", async () => {
     await userEvent.type(fromInput, "2025-09-10");
     await userEvent.clear(toInput);
     await userEvent.type(toInput, "2025-09-12");
+    await userEvent.clear(foodInput);
+    await userEvent.type(foodInput, "食べたもの更新");
+    await userEvent.clear(activityInput);
+    await userEvent.type(activityInput, "行った場所更新");
     await userEvent.clear(memoInput);
     await userEvent.type(memoInput, "メモ更新");
     await userEvent.click(submit);
@@ -528,6 +534,8 @@ describe("入力フォーム", async () => {
         visitFromDate: "2025-09-10",
         visitToDate: "2025-09-12",
         memo: "メモ更新",
+        food: "食べたもの更新",
+        activity: "行った場所更新",
       });
     });
 
