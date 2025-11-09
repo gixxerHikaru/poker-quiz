@@ -231,7 +231,7 @@ export default function Prefectures() {
                   ? `${new Date(visit.visitFromDate).toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit" })} ~ ${new Date(visit.visitToDate).toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit" })}`
                   : "まだ行ったこと無い、、、今度行こ！"}
               </div>
-              <div className="font-semibold">メモ(行ったところ等)</div>
+              <div className="font-semibold">その他</div>
               <div className="md:col-span-2">{visit?.memo ?? "-"}</div>
               <div className="font-semibold">写真</div>
               {visit?.images && visit.images.length > 0 && (
@@ -300,7 +300,7 @@ export default function Prefectures() {
                   htmlFor="memo"
                   className="block text-sm font-bold text-black"
                 >
-                  メモ
+                  その他!!!
                 </label>
                 <input
                   type="text"

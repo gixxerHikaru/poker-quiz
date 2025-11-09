@@ -155,7 +155,7 @@ describe("初期画面表示", async () => {
     expect(
       await screen.findByText("2025/09/01 ~ 2025/09/01")
     ).toBeInTheDocument();
-    expect(await screen.findByText("メモ(行ったところ等)")).toBeInTheDocument();
+    expect(await screen.findByText("その他")).toBeInTheDocument();
     expect(await screen.findByText("メモ書いてみた")).toBeInTheDocument();
   });
 
@@ -341,7 +341,7 @@ describe("入力フォーム", async () => {
 
     const fromInput = await screen.findByLabelText("訪問日");
     const toInput = await screen.findByLabelText("帰宅日");
-    const memoInput = await screen.findByLabelText("メモ");
+    const memoInput = await screen.findByLabelText("その他!!!");
     const submit = await screen.findByRole("button", { name: "登録" });
 
     await userEvent.clear(fromInput);
@@ -445,7 +445,7 @@ describe("入力フォーム", async () => {
 
     const fromInput = await screen.findByLabelText("訪問日");
     const toInput = await screen.findByLabelText("帰宅日");
-    const memoInput = await screen.findByLabelText("メモ");
+    const memoInput = await screen.findByLabelText("その他!!!");
     const submit = await screen.findByRole("button", { name: "登録" });
 
     expect(await screen.findByText("過去メモ")).toBeInTheDocument();
