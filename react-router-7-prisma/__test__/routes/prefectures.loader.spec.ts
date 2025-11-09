@@ -25,6 +25,8 @@ describe("prefectures loader（画像含む）", () => {
       prefectureId: 47,
       visitFromDate: new Date("2025-09-01T00:00:00.000Z"),
       visitToDate: new Date("2025-09-02T00:00:00.000Z"),
+      food: "f",
+      activity: "a",
       memo: "m",
     } as any;
     const imageRows = [
@@ -43,6 +45,9 @@ describe("prefectures loader（画像含む）", () => {
     expect(res.visit?.images).toEqual(imageRows);
     expect(res.visit?.visitFromDate).toBe("2025-09-01T00:00:00.000Z");
     expect(res.visit?.visitToDate).toBe("2025-09-02T00:00:00.000Z");
+    expect(res.visit?.food).toBe("f");
+    expect(res.visit?.activity).toBe("a");
+    expect(res.visit?.memo).toBe("m");
   });
 
   test("visit が見つからない場合は visit=null を返す", async () => {

@@ -17,6 +17,8 @@ type LoaderData = {
     prefectureId: number;
     visitFromDate: string;
     visitToDate: string;
+    food: string | null;
+    activity: string | null;
     memo: string | null;
     images?: {
       id: number;
@@ -139,6 +141,8 @@ export const loader = async ({
           prefectureId: visit.prefectureId,
           visitFromDate: visit.visitFromDate.toISOString(),
           visitToDate: visit.visitToDate.toISOString(),
+          food: visit.food,
+          activity: visit.activity,
           memo: visit.memo,
           images,
         }
@@ -223,6 +227,10 @@ export default function Prefectures() {
                   ? `${new Date(visit.visitFromDate).toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit" })} ~ ${new Date(visit.visitToDate).toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit" })}`
                   : "まだ行ったこと無い、、、今度行こ！"}
               </div>
+              <div className="font-semibold">食べたもの</div>
+              <div className="md:col-span-2">{visit?.food ?? "-"}</div>
+              <div className="font-semibold">行った場所</div>
+              <div className="md:col-span-2">{visit?.activity ?? "-"}</div>
               <div className="font-semibold">その他</div>
               <div className="md:col-span-2">{visit?.memo ?? "-"}</div>
               <div className="font-semibold">写真</div>

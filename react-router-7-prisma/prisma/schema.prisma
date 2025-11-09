@@ -26,6 +26,8 @@ model Visits {
   visitFromDate DateTime
   visitToDate DateTime
   prefectureId Int
+  food String?
+  activity String?
   memo String?
   prefecture Prefectures @relation(fields: [prefectureId], references: [id])
   images Images[]

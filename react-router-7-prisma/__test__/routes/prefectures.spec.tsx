@@ -129,6 +129,66 @@ describe("初期画面表示", async () => {
     ).toBeInTheDocument();
   });
 
+  test("食べ物を見ることができる", async () => {
+    const { default: Prefectures } = await import(
+      "../../app/routes/prefectures"
+    );
+    const Stub = createRoutesStub([
+      {
+        path: "/prefectures/:prefectureId/:prefectureName",
+        Component: Prefectures,
+        loader: () => {
+          return {
+            visit: {
+              id: 1,
+              prefectureId: 47,
+              visitFromDate: "2025-09-01",
+              visitToDate: "2025-09-01",
+              food: "食べ物書いてみた",
+            },
+          };
+        },
+      },
+    ]);
+    render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+    expect(await screen.findByText("最後に訪問した期間"));
+    expect(
+      await screen.findByText("2025/09/01 ~ 2025/09/01")
+    ).toBeInTheDocument();
+    expect(await screen.findByText("食べたもの")).toBeInTheDocument();
+    expect(await screen.findByText("食べ物書いてみた")).toBeInTheDocument();
+  });
+
+  test("活動を見ることができる", async () => {
+    const { default: Prefectures } = await import(
+      "../../app/routes/prefectures"
+    );
+    const Stub = createRoutesStub([
+      {
+        path: "/prefectures/:prefectureId/:prefectureName",
+        Component: Prefectures,
+        loader: () => {
+          return {
+            visit: {
+              id: 1,
+              prefectureId: 47,
+              visitFromDate: "2025-09-01",
+              visitToDate: "2025-09-01",
+              activity: "活動書いてみた",
+            },
+          };
+        },
+      },
+    ]);
+    render(<Stub initialEntries={[`/prefectures/47/沖縄県`]} />);
+    expect(await screen.findByText("最後に訪問した期間"));
+    expect(
+      await screen.findByText("2025/09/01 ~ 2025/09/01")
+    ).toBeInTheDocument();
+    expect(await screen.findByText("行った場所")).toBeInTheDocument();
+    expect(await screen.findByText("活動書いてみた")).toBeInTheDocument();
+  });
+
   test("メモを見ることができる", async () => {
     const { default: Prefectures } = await import(
       "../../app/routes/prefectures"
