@@ -11,14 +11,6 @@ type ActionData = {
   success: boolean;
 };
 
-type submitData = {
-  prefectureId: number;
-  visitFromDate: string;
-  visitToDate: string;
-  memo: string;
-  images: string;
-};
-
 type LoaderData = {
   visit: {
     id: number;
