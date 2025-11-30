@@ -3,12 +3,6 @@ export function statement(invoice: any, plays: any) {
   let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
 
-  const format = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format;
-
   for (let perf of invoice.performances) {
     // ボリューム特典のポイント加算
     volumeCredits += volumeCreditsFor(perf);
@@ -21,6 +15,14 @@ export function statement(invoice: any, plays: any) {
   result += `You earned ${volumeCredits} credits\n`;
 
   return result;
+
+  function format(aNumber: number) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(aNumber);
+  }
 
   function volumeCreditsFor(aPerformance: any) {
     let result = 0;
