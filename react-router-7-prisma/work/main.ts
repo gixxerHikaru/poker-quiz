@@ -11,11 +11,7 @@ export function statement(invoice: any, plays: any) {
 
   for (let perf of invoice.performances) {
     // ボリューム特典のポイント加算
-    volumeCredits += Math.max(perf.audience - 30, 0);
-
-    // 喜劇の時は10人につきさらにポイント加算
-    if ("comedy" === playFor(perf).type)
-      volumeCredits += Math.floor(perf.audience / 5);
+    volumeCredits += volumeCreditsFor(perf);
 
     // 注文の内訳を出力
     result += ` ${playFor(perf).name}: ${format(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
@@ -25,6 +21,16 @@ export function statement(invoice: any, plays: any) {
   result += `You earned ${volumeCredits} credits\n`;
 
   return result;
+
+  function volumeCreditsFor(perf: any) {
+    let volumeCredits = 0;
+    volumeCredits += Math.max(perf.audience - 30, 0);
+
+    // 喜劇の時は10人につきさらにポイント加算
+    if ("comedy" === playFor(perf).type)
+      volumeCredits += Math.floor(perf.audience / 5);
+    return volumeCredits;
+  }
 
   function playFor(aPerformance: any) {
     return plays[aPerformance.playID];
