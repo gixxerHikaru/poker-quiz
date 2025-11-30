@@ -23,12 +23,12 @@ export function statement(invoice: any, plays: any) {
   return result;
 
   function volumeCreditsFor(perf: any) {
-    let volumeCredits = 0;
-    volumeCredits += Math.max(perf.audience - 30, 0);
+    let result = 0;
+    result += Math.max(perf.audience - 30, 0);
 
     if ("comedy" === playFor(perf).type)
-      volumeCredits += Math.floor(perf.audience / 5);
-    return volumeCredits;
+      result += Math.floor(perf.audience / 5);
+    return result;
   }
 
   function playFor(aPerformance: any) {
