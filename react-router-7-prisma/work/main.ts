@@ -1,6 +1,5 @@
 export function statement(invoice: any, plays: any) {
   let totalAmount = 0;
-  let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances) {
@@ -8,6 +7,7 @@ export function statement(invoice: any, plays: any) {
     result += ` ${playFor(perf).name}: ${usd(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
     totalAmount += amountFor(perf);
   }
+  let volumeCredits = 0;
   for (let perf of invoice.performances) {
     // ボリューム特典のポイント加算
     volumeCredits += volumeCreditsFor(perf);
