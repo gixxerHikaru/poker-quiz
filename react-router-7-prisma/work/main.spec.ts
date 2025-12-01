@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { statement } from "./main";
+import { htmlStatement } from "./main";
 import invoice from "./invoices.json";
 import plays from "./plays.json";
 
 describe("statement", () => {
   it("should generate correct statement", () => {
-    const result = statement(invoice[0], plays);
+    const result = htmlStatement(invoice[0], plays);
 
     const expected = [
       "Statement for BigCo",

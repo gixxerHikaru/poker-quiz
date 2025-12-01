@@ -1,10 +1,10 @@
 import { createStatementData } from "./createStatementData";
 
-export function statement(invoice: any, plays: any) {
-  return renderPlainText(createStatementData(invoice, plays));
+export function htmlStatement(invoice: any, plays: any) {
+  return renderHtml(createStatementData(invoice, plays));
 }
 
-function renderPlainText(data: any) {
+function renderHtml(data: any) {
   let result = `Statement for ${data.customer}\n`;
 
   for (let perf of data.performances) {
@@ -14,12 +14,12 @@ function renderPlainText(data: any) {
   result += `You earned ${data.totalVolumeCredits} credits\n`;
 
   return result;
+}
 
-  function usd(aNumber: number) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(aNumber / 100);
-  }
+function usd(aNumber: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  }).format(aNumber / 100);
 }
