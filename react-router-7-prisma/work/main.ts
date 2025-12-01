@@ -1,11 +1,14 @@
 export function statement(invoice: any, plays: any) {
-  const statementData = {};
+  const statementData: any = {};
+  statementData.customer = invoice.customer;
+  statementData.performances = invoice.performances;
+
   return renderPlainText(statementData, invoice, plays);
 }
 function renderPlainText(data: any, invoice: any, plays: any) {
-  let result = `Statement for ${invoice.customer}\n`;
+  let result = `Statement for ${data.customer}\n`;
 
-  for (let perf of invoice.performances) {
+  for (let perf of data.performances) {
     result += ` ${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
   }
   result += `Amount owed is ${usd(totalAmount())}\n`;
