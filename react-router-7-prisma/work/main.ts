@@ -14,14 +14,6 @@ function renderPlainText(data: any) {
   result += `You earned ${data.totalVolumeCredits} credits\n`;
 
   return result;
-
-  function usd(aNumber: number) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(aNumber / 100);
-  }
 }
 
 function htmlStatement(invoice: any, plays: any) {
@@ -40,12 +32,12 @@ function renderHtml(data: any) {
   result += `<p>You earned ${data.totalVolumeCredits} credits</p>\n`;
 
   return result;
+}
 
-  function usd(aNumber: number) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(aNumber / 100);
-  }
+function usd(aNumber: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  }).format(aNumber / 100);
 }
