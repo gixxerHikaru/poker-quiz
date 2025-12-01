@@ -1,4 +1,7 @@
 export function statement(invoice: any, plays: any) {
+  return renderPlainText(invoice, plays);
+}
+function renderPlainText(invoice: any, plays: any) {
   let result = `Statement for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances) {
