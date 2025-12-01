@@ -4,11 +4,13 @@ export function statement(invoice: any, plays: any) {
   statementData.performances = invoice.performances.map(enrichPerformance);
 
   return renderPlainText(statementData, plays);
+
+  function enrichPerformance(aPerformance: any) {
+    const result = Object.assign({}, aPerformance);
+    return result;
+  }
 }
-function enrichPerformance(aPerformance: any) {
-  const result = Object.assign({}, aPerformance);
-  return result;
-}
+
 function renderPlainText(data: any, plays: any) {
   let result = `Statement for ${data.customer}\n`;
 
