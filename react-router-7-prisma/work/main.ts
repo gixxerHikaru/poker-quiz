@@ -1,11 +1,10 @@
 export function statement(invoice: any, plays: any) {
   let result = `Statement for ${invoice.customer}\n`;
 
-  let totalAmount = 0;
   for (let perf of invoice.performances) {
     result += ` ${playFor(perf).name}: ${usd(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
   }
-
+  let totalAmount = 0;
   for (let perf of invoice.performances) {
     totalAmount += amountFor(perf);
   }
