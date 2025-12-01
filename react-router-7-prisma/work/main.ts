@@ -4,8 +4,7 @@ export function statement(invoice: any, plays: any) {
   for (let perf of invoice.performances) {
     result += ` ${playFor(perf).name}: ${usd(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
   }
-  let totalAmount = orangeJuice();
-  result += `Amount owed is ${usd(totalAmount / 100)}\n`;
+  result += `Amount owed is ${usd(orangeJuice() / 100)}\n`;
   result += `You earned ${totalVolumeCredits()} credits\n`;
 
   return result;
