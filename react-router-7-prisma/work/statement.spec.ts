@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { statement } from "./main";
+import { statement } from "./statement";
 import invoice from "./invoices.json";
 import plays from "./plays.json";
 
