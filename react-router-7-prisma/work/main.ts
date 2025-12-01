@@ -1,19 +1,22 @@
 export function statement(invoice: any, plays: any) {
-  const statementData: any = {};
-  statementData.customer = invoice.customer;
-  statementData.performances = invoice.performances.map(enrichPerformance);
-  statementData.totalAmount = totalAmount(statementData);
-  statementData.totalVolumeCredits = totalVolumeCredits(statementData);
+  return renderPlainText(createStatementData(invoice, plays));
 
-  return renderPlainText(statementData, plays);
+  function createStatementData(invoice: any, plays: any) {
+    const statementData: any = {};
+    statementData.customer = invoice.customer;
+    statementData.performances = invoice.performances.map(enrichPerformance);
+    statementData.totalAmount = totalAmount(statementData);
+    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
+    return statementData;
 
-  function enrichPerformance(aPerformance: any) {
-    const result = Object.assign({}, aPerformance);
-    result.play = playFor(result);
-    result.amount = amountFor(result);
-    result.volumeCredits = volumeCreditsFor(result);
+    function enrichPerformance(aPerformance: any) {
+      const result = Object.assign({}, aPerformance);
+      result.play = playFor(result);
+      result.amount = amountFor(result);
+      result.volumeCredits = volumeCreditsFor(result);
 
-    return result;
+      return result;
+    }
   }
 
   function playFor(aPerformance: any) {
@@ -67,7 +70,7 @@ export function statement(invoice: any, plays: any) {
   }
 }
 
-function renderPlainText(data: any, plays: any) {
+function renderPlainText(data: any) {
   let result = `Statement for ${data.customer}\n`;
 
   for (let perf of data.performances) {
