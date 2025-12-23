@@ -20,5 +20,5 @@ test("renders the home page", () => {
   render(<Stub initialEntries={["/welcome"]} />);
   console.log(screen);
 
-  expect(screen.getByText("Welcome to React Router v7!"));
+  expect(screen.getByText("Poker Quiz"));
 });
