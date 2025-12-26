@@ -4,7 +4,11 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [tailwindcss(), !process.env.VITEST && reactRouter(), tsconfigPaths()],
+  plugins: [
+    tailwindcss(),
+    !process.env.VITEST && reactRouter(),
+    tsconfigPaths(),
+  ],
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
