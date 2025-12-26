@@ -45,5 +45,5 @@ test('スタートボタンが見え、ボタンを押すとクイズ画面に�
 
   await user.click(startButton);
 
-  expect(await screen.findByText('Quiz')).toBeInTheDocument();
+  expect(await screen.findByRole('button', { name: 'ハイカード' })).toBeInTheDocument();
 });
