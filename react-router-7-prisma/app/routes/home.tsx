@@ -1,11 +1,11 @@
-import type { Route } from "./+types/home";
-import { useNavigate } from "react-router";
-import cardBack from "../../public/cards/card_back.png";
+import type { Route } from './+types/home';
+import { useNavigate } from 'react-router';
+import cardBack from '../../public/cards/card_back.png';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: 'New React Router App' },
+    { name: 'description', content: 'Welcome to React Router!' },
   ];
 }
 
@@ -27,7 +27,7 @@ export default function Home() {
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => {
-              navigate("/quiz");
+              navigate('/quiz');
             }}
           >
             スタート
