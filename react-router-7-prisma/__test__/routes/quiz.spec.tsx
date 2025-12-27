@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { expect, test, describe } from 'vitest';
 import Quiz from '../../app/routes/quiz';
 import { createRoutesStub } from 'react-router';
+import { userEvent } from '@testing-library/user-event';
 
 const Stub = createRoutesStub([
   {
@@ -52,7 +53,6 @@ describe('トランプの重複チェック用に同じテストを複数回実�
 
 test('クイズの解答権(ポーカーの役)ボタンが10個見える', async () => {
   render(<Stub initialEntries={['/quiz']} />);
-
   const HighCardButton = await screen.findByRole('button', { name: 'ハイカード' });
   const OnePairButton = await screen.findByRole('button', { name: 'ワンペア' });
   const TwoPairButton = await screen.findByRole('button', { name: 'ツーペア' });
@@ -74,4 +74,29 @@ test('クイズの解答権(ポーカーの役)ボタンが10個見える', asyn
   expect(FourOfAKindButton).toBeInTheDocument();
   expect(StraightFlushButton).toBeInTheDocument();
   expect(RoyalFlushButton).toBeInTheDocument();
+});
+
+test.each([
+  'ハイカード',
+  'ワンペア',
+  'ツーペア',
+  'スリーカード',
+  'ストレート',
+  'フラッシュ',
+  'フルハウス',
+  'フォーカード',
+  'ストレートフラッシュ',
+  'ロイヤルフラッシュ',
+])('解答ボタンを押すと、画面に解答が表示され、ボタンが見えなくなる', async (buttonName: string) => {
+  render(<Stub initialEntries={['/quiz']} />);
+
+  const user = userEvent.setup();
+  const answerButton = await screen.findByRole('button', { name: buttonName });
+
+  expect(screen.queryByText('Your Answer:')).toBeNull();
+
+  await user.click(answerButton);
+
+  await screen.findByText(`Your Answer: ${buttonName}`);
+  expect(screen.queryByRole('button', { name: buttonName })).toBeNull();
 });
