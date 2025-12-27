@@ -1,8 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { expect, test } from 'vitest';
+import { expect, test, describe } from 'vitest';
 import Quiz from '../../app/routes/quiz';
 import { createRoutesStub } from 'react-router';
-import userEvent from '@testing-library/user-event';
 
 const Stub = createRoutesStub([
   {
@@ -25,6 +24,30 @@ test('タイトル下に表になったカードが5枚見える', () => {
   expect(card3).toBeDefined();
   expect(card4).toBeDefined();
   expect(card5).toBeDefined();
+});
+
+test('トランプがランダムに配られる', async cards => {
+  render(<Stub initialEntries={['/quiz']} />);
+
+  const cardImages = await screen.findAllByRole('img');
+  cardImages.map(img =>
+    expect(img.getAttribute('src')).toSatisfy(src =>
+      src?.match(/C0[2-9]|C10|C[JQKA]|D0[2-9]|D10|D[JQKA]|H0[2-9]|H10|H[JQKA]|S0[2-9]|S10|S[JQKA]/)
+    )
+  );
+});
+
+describe('トランプの重複チェック用に同じテストを複数回実行', () => {
+  const repeatNumbers = Array.from({ length: 10 });
+  test.each(repeatNumbers)('配られるトランプは重複しない', async () => {
+    render(<Stub initialEntries={['/quiz']} />);
+
+    const cardImages = await screen.findAllByRole('img');
+    const srcList = cardImages.map(img => img.getAttribute('src'));
+    const uniqueSrcList = Array.from(new Set(srcList));
+
+    expect(srcList.length).toBe(uniqueSrcList.length);
+  });
 });
 
 test('クイズの解答権(ポーカーの役)ボタンが10個見える', async () => {
