@@ -1,6 +1,5 @@
 import type { Route } from './+types/home';
 import { useNavigate } from 'react-router';
-import cardBack from '../../public/cards/card_back.png';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,6 +10,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const navigate = useNavigate();
+  const cardBack = '/cards/card_back.png';
 
   return (
     <main className="items-center justify-center pt-16 pb-4">
