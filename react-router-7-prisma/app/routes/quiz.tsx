@@ -45,26 +45,26 @@ const CardList = memo(() => {
   );
 });
 
-const DisplayAnswer = ({ answer }: { answer: string | undefined }) => {
-  return <div>Your Answer: {answer}</div>;
+const DisplayAnswer = ({ answer: userSelectAnswer }) => {
+  return <div>Your Answer: {userSelectAnswer}</div>;
 };
 
 export default function Quiz() {
-  const [displayAnswer, setDisplayAnswer] = useState();
+  const [userSelectAnswer, setUserSelectAnswer] = useState();
 
   return (
     <main className="items-center justify-center pt-16 pb-4">
       <div className="flex flex-col items-center gap-16 min-h-0">
         <CardList />
-        {displayAnswer ? (
-          <DisplayAnswer answer={displayAnswer} />
+        {userSelectAnswer ? (
+          <DisplayAnswer answer={userSelectAnswer} />
         ) : (
           <div className="grid grid-cols-2 gap-4">
             {ANSWER.map(answerName => (
               <button
                 className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
                 onClick={() => {
-                  setDisplayAnswer(answerName);
+                  setUserSelectAnswer(answerName);
                 }}
               >
                 {answerName}
