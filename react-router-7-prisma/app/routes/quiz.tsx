@@ -44,10 +44,6 @@ const CardList = memo(({ cards }) => {
   );
 });
 
-const DisplayAnswer = ({ answer: userSelectAnswer }) => {
-  return <div>Your Answer: {userSelectAnswer}</div>;
-};
-
 export default function Quiz() {
   const [userSelectAnswer, setUserSelectAnswer] = useState();
 
@@ -57,7 +53,9 @@ export default function Quiz() {
         <CardList cards={quizData.cardsPath} />
 
         {userSelectAnswer ? (
-          <DisplayAnswer answer={userSelectAnswer} />
+          <>
+            <div>Your Answer: {userSelectAnswer}</div>
+          </>
         ) : (
           <div className="grid grid-cols-2 gap-4">
             {ANSWER.map(answerName => (
