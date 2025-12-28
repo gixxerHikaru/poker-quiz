@@ -32,8 +32,7 @@ function getUniqueCards(count: number = 5): string[] {
   return deck.slice(0, count);
 }
 
-const CardList = memo(() => {
-  const cards = getUniqueCards(5);
+const CardList = memo(({ cards }) => {
   return (
     <div className="flex gap-4">
       <img src={cards[0]} alt="card1" className="w-24 h-auto" />
@@ -54,8 +53,9 @@ export default function Quiz() {
 
   return (
     <main className="items-center justify-center pt-16 pb-4">
-      <div className="flex flex-col items-center gap-16 min-h-0">
-        <CardList />
+      <div className="flex flex-col items-center gap-16">
+        <CardList cards={quizData.cardsPath} />
+
         {userSelectAnswer ? (
           <DisplayAnswer answer={userSelectAnswer} />
         ) : (
