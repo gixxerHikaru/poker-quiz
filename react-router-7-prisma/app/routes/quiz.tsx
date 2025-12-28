@@ -62,6 +62,7 @@ export default function Quiz() {
           <div className="grid grid-cols-2 gap-4">
             {ANSWER.map(answerName => (
               <button
+                key={answerName}
                 className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
                 onClick={() => {
                   setUserSelectAnswer(answerName);
