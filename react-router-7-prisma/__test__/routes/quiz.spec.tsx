@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { expect, test, describe } from 'vitest';
-import Quiz from '../../app/routes/quiz';
+import Quiz, { judgeSystemAnswer } from '../../app/routes/quiz';
 import { createRoutesStub } from 'react-router';
 import { userEvent } from '@testing-library/user-event';
 
@@ -99,4 +99,62 @@ test.each([
 
   await screen.findByText(`Your Answer: ${buttonName}`);
   expect(screen.queryByRole('button', { name: buttonName })).toBeNull();
+});
+
+describe('役判定の関数', () => {
+  test.each([
+    { answer: 'ハイカード', cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'] },
+    { answer: 'ワンペア', cards: ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'] },
+    { answer: 'ツーペア', cards: ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'] },
+    { answer: 'スリーカード', cards: ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'] },
+    { answer: 'ストレート', cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C06.png'] },
+    { answer: 'フラッシュ', cards: ['C02.png', 'C03.png', 'C04.png', 'C05.png', 'C07.png'] },
+    { answer: 'フルハウス', cards: ['C02.png', 'D02.png', 'H04.png', 'S04.png', 'C04.png'] },
+    { answer: 'フォーカード', cards: ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'] },
+    {
+      answer: 'ストレートフラッシュ',
+      cards: ['D03.png', 'D04.png', 'D05.png', 'D06.png', 'D07.png'],
+    },
+    { answer: 'ロイヤルフラッシュ', cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'] },
+  ])(
+    '$answer 配られたトランプの正しい役が画面に正解として出力される',
+    async ({ answer, cards }) => {
+      const result = await judgeSystemAnswer(cards);
+      expect(result).toBe(answer);
+    }
+  );
+
+  test.each([
+    {
+      answer: 'ストレート',
+      cards: ['S10.png', 'DJ.png', 'HQ.png', 'CK.png', 'SA.png'],
+      description: 'エースを高値として扱うストレート',
+    },
+    {
+      answer: 'ストレート',
+      cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'CA.png'],
+      description: 'エースから始まるストレート',
+    },
+    {
+      answer: 'ハイカード',
+      cards: ['C02.png', 'D03.png', 'H04.png', 'SK.png', 'CA.png'],
+      description: 'ストレートに見えるが、つながっていない場合',
+    },
+    {
+      answer: 'ハイカード',
+      cards: ['C02.png', 'D03.png', 'HQ.png', 'SK.png', 'CA.png'],
+      description: 'ストレートに見えるが、つながっていない場合',
+    },
+    {
+      answer: 'ハイカード',
+      cards: ['C02.png', 'D0J.png', 'HQ.png', 'SK.png', 'CA.png'],
+      description: 'ストレートに見えるが、つながっていない場合',
+    },
+  ])(
+    '$description 特殊ケースでも正しい役が画面に正解として出力される',
+    async ({ answer, cards }) => {
+      const result = await judgeSystemAnswer(cards);
+      expect(result).toBe(answer);
+    }
+  );
 });
