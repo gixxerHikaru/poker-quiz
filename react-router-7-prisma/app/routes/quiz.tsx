@@ -193,6 +193,7 @@ export default function Quiz() {
   const [userSelectAnswer, setUserSelectAnswer] = useState<string | undefined>();
   const [startTime, setStartTime] = useState<number>(0);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [isTimeout, setIsTimeout] = useState(false);
 
   useEffect(() => {
     const cardsPath = getUniqueCards(5);
@@ -203,6 +204,17 @@ export default function Quiz() {
 
     console.info('生成されたカード:', cardsPath);
   }, []);
+
+  useEffect(() => {
+    if (!startTime || userSelectAnswer) return;
+
+    const timer = setTimeout(() => {
+      setIsTimeout(true);
+      setUserSelectAnswer('Time Out');
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, [startTime, userSelectAnswer]);
 
   if (!quizData)
     return (
@@ -220,10 +232,16 @@ export default function Quiz() {
 
         {userSelectAnswer ? (
           <div className="flex flex-col items-end gap-4">
-            <div>Your Answer: {userSelectAnswer}</div>
-            <div>Field: {quizData.systemAnswer}</div>
-            {userSelectAnswer == quizData.systemAnswer ? <div>正解</div> : <div>不正解</div>}
-            <div>解答時間: {elapsedTime / 1000}秒</div>
+            <>
+              <div>Your Answer: {userSelectAnswer}</div>
+              <div>Field: {quizData.systemAnswer}</div>
+              {userSelectAnswer == quizData.systemAnswer ? <div>正解</div> : <div>不正解</div>}
+              {isTimeout ? (
+                <div>解答時間: タイムアウト(10秒経過)</div>
+              ) : (
+                <div>解答時間: {elapsedTime / 1000}秒</div>
+              )}
+            </>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">

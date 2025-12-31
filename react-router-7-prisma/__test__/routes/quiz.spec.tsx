@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { expect, test, describe, vi, afterEach } from 'vitest';
 import Quiz, { judgeSystemAnswer } from '../../app/routes/quiz';
 import { createRoutesStub } from 'react-router';
@@ -132,6 +132,26 @@ describe('解答ボタン押下後', () => {
     expect(screen.getByText('解答時間: 1.111秒')).toBeInTheDocument();
 
     vi.useRealTimers();
+  });
+
+  test('手札表示から10秒経過するとタイムアウトされ、無回答になる', () => {
+    vi.useFakeTimers();
+
+    const startTime = '2025-12-31T12:00:00.000Z';
+    vi.setSystemTime(new Date(startTime));
+    render(<Stub initialEntries={['/quiz']} />);
+
+    const answerButton = screen.getByRole('button', { name: 'ハイカード' });
+    expect(answerButton).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(10000);
+    });
+
+    expect(answerButton).not.toBeInTheDocument();
+    expect(screen.getByText('Your Answer: Time Out')).toBeInTheDocument();
+    expect(screen.getByText('不正解')).toBeInTheDocument();
+    expect(screen.getByText('解答時間: タイムアウト(10秒経過)')).toBeInTheDocument();
   });
 
   describe('役判定の関数', () => {
