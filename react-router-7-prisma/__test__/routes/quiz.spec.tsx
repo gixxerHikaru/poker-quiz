@@ -158,3 +158,23 @@ describe('役判定の関数', () => {
     }
   );
 });
+
+test('正解・不正解の判定が表示される', async () => {
+  render(<Stub initialEntries={['/quiz']} />);
+  const user = userEvent.setup();
+
+  const selectedAnswer = 'ロイヤルフラッシュ';
+  const answerButton = await screen.findByRole('button', { name: selectedAnswer });
+  await user.click(answerButton);
+
+  const fieldElement = await screen.findByText(/Field:/);
+  const systemAnswer = fieldElement.textContent?.split(': ')[1];
+
+  if (systemAnswer === selectedAnswer) {
+    expect(screen.getByText('正解')).toBeInTheDocument();
+    expect(screen.queryByText('不正解')).toBeNull();
+  } else {
+    expect(screen.getByText('不正解')).toBeInTheDocument();
+    expect(screen.queryByText('正解')).toBeNull();
+  }
+});

@@ -219,6 +219,7 @@ export default function Quiz() {
           <div className="flex flex-col items-end gap-4">
             <div>Your Answer: {userSelectAnswer}</div>
             <div>Field: {quizData.systemAnswer}</div>
+            {userSelectAnswer == quizData.systemAnswer ? <div>正解</div> : <div>不正解</div>}
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
