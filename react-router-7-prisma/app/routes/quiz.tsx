@@ -235,11 +235,20 @@ export default function Quiz() {
             <>
               <div>Your Answer: {userSelectAnswer}</div>
               <div>Field: {quizData.systemAnswer}</div>
-              {userSelectAnswer == quizData.systemAnswer ? <div>正解</div> : <div>不正解</div>}
-              {isTimeout ? (
-                <div>解答時間: タイムアウト(10秒経過)</div>
+              {userSelectAnswer == quizData.systemAnswer ? (
+                <>
+                  <div>正解</div>
+                  <div>解答時間: {elapsedTime / 1000}秒</div>
+                </>
               ) : (
-                <div>解答時間: {elapsedTime / 1000}秒</div>
+                <>
+                  <div>不正解</div>
+                  {isTimeout ? (
+                    <div>解答時間: タイムアウト(10秒経過)</div>
+                  ) : (
+                    <div>解答時間: {elapsedTime / 1000}秒</div>
+                  )}
+                </>
               )}
             </>
           </div>
