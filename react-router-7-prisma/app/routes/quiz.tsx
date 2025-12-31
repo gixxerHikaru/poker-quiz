@@ -191,12 +191,15 @@ export default function Quiz() {
   } | null>(null);
 
   const [userSelectAnswer, setUserSelectAnswer] = useState<string | undefined>();
+  const [startTime, setStartTime] = useState<number>(0);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
 
   useEffect(() => {
     const cardsPath = getUniqueCards(5);
     const systemAnswer = judgeSystemAnswer(cardsPath);
 
     setQuizData({ cardsPath, systemAnswer });
+    setStartTime(Date.now());
 
     console.info('生成されたカード:', cardsPath);
   }, []);
@@ -220,6 +223,7 @@ export default function Quiz() {
             <div>Your Answer: {userSelectAnswer}</div>
             <div>Field: {quizData.systemAnswer}</div>
             {userSelectAnswer == quizData.systemAnswer ? <div>正解</div> : <div>不正解</div>}
+            <div>解答時間: {elapsedTime / 1000}秒</div>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
@@ -229,6 +233,7 @@ export default function Quiz() {
                 className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
                 onClick={() => {
                   setUserSelectAnswer(answerName);
+                  setElapsedTime(Date.now() - startTime);
                 }}
               >
                 {answerName}

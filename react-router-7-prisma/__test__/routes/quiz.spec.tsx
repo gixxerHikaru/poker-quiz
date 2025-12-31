@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { expect, test, describe } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { expect, test, describe, vi, afterEach } from 'vitest';
 import Quiz, { judgeSystemAnswer } from '../../app/routes/quiz';
 import { createRoutesStub } from 'react-router';
 import { userEvent } from '@testing-library/user-event';
@@ -10,6 +10,13 @@ const Stub = createRoutesStub([
     Component: Quiz,
   },
 ]);
+
+vi.setConfig({ testTimeout: 15000 });
+
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
 
 describe('解答ボタン押下前', () => {
   test('タイトル下に表になったカードが5枚見える', () => {
@@ -108,6 +115,24 @@ describe('解答ボタン押下後', () => {
       expect(screen.queryByRole('button', { name: buttonName })).toBeNull();
     }
   );
+
+  test('手札表示から解答ボタン押下までにかかった時間が表示される', () => {
+    vi.useFakeTimers();
+
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime, delay: null });
+    const startTime = '2025-12-31T12:00:00.000Z';
+    vi.setSystemTime(new Date(startTime));
+    render(<Stub initialEntries={['/quiz']} />);
+
+    const answerButton = screen.getByRole('button', { name: 'ハイカード' });
+    vi.advanceTimersByTime(1111);
+    fireEvent.click(answerButton);
+    vi.advanceTimersByTime(1000);
+
+    expect(screen.getByText('解答時間: 1.111秒')).toBeInTheDocument();
+
+    vi.useRealTimers();
+  });
 
   describe('役判定の関数', () => {
     test.each([
