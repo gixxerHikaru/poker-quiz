@@ -20,6 +20,22 @@ const Stub = createRoutesStub([
   },
 ]);
 
+const highCardsList = ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'];
+const onePairList = ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'];
+const twoPairList = ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'];
+const threeOfAKindList = ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'];
+const straightList = ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C06.png'];
+const flushList = ['C02.png', 'C03.png', 'C04.png', 'C05.png', 'C07.png'];
+const fullHouseList = ['C02.png', 'D02.png', 'H04.png', 'S04.png', 'C04.png'];
+const fourOfAKindList = ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'];
+const straightFlushList = ['D03.png', 'D04.png', 'D05.png', 'D06.png', 'D07.png'];
+const royalFlashList = ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'];
+const highAceStraightList = ['S10.png', 'DJ.png', 'HQ.png', 'CK.png', 'SA.png'];
+const lowAceStraightList = ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'CA.png'];
+const notStraightList1 = ['C02.png', 'D03.png', 'H04.png', 'SK.png', 'CA.png'];
+const notStraightList2 = ['C02.png', 'D03.png', 'HQ.png', 'SK.png', 'CA.png'];
+const notStraightList3 = ['C02.png', 'DJ.png', 'HQ.png', 'SK.png', 'CA.png'];
+
 vi.setConfig({ testTimeout: 15000 });
 
 afterEach(() => {
@@ -166,77 +182,77 @@ describe('解答ボタン押下後', () => {
   test.each([
     {
       answer: 'ハイカード',
-      cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'],
+      cards: highCardsList,
       description: 'ハイカード',
     },
     {
       answer: 'ワンペア',
-      cards: ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'],
+      cards: onePairList,
       description: 'ワンペア',
     },
     {
       answer: 'ツーペア',
-      cards: ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'],
+      cards: twoPairList,
       description: 'ツーペア',
     },
     {
       answer: 'スリーカード',
-      cards: ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'],
+      cards: threeOfAKindList,
       description: 'スリーカード',
     },
     {
       answer: 'ストレート',
-      cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C06.png'],
+      cards: straightList,
       description: 'ストレート',
     },
     {
       answer: 'フラッシュ',
-      cards: ['C02.png', 'C03.png', 'C04.png', 'C05.png', 'C07.png'],
+      cards: flushList,
       description: 'フラッシュ',
     },
     {
       answer: 'フルハウス',
-      cards: ['C02.png', 'D02.png', 'H04.png', 'S04.png', 'C04.png'],
+      cards: fullHouseList,
       description: 'フルハウス',
     },
     {
       answer: 'フォーカード',
-      cards: ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'],
+      cards: fourOfAKindList,
       description: 'フォーカード',
     },
     {
       answer: 'ストレートフラッシュ',
-      cards: ['D03.png', 'D04.png', 'D05.png', 'D06.png', 'D07.png'],
+      cards: straightFlushList,
       description: 'ストレートフラッシュ',
     },
     {
       answer: 'ロイヤルフラッシュ',
-      cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'],
+      cards: royalFlashList,
       description: 'ロイヤルフラッシュ',
     },
     {
       answer: 'ストレート',
-      cards: ['S10.png', 'DJ.png', 'HQ.png', 'CK.png', 'SA.png'],
+      cards: highAceStraightList,
       description: '特殊ケース_エースを高値として扱うストレート',
     },
     {
       answer: 'ストレート',
-      cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'CA.png'],
+      cards: lowAceStraightList,
       description: '特殊ケース_エースから始まるストレート',
     },
     {
       answer: 'ハイカード',
-      cards: ['C02.png', 'D03.png', 'H04.png', 'SK.png', 'CA.png'],
+      cards: notStraightList1,
       description: '特殊ケース_ストレートに見えるが、つながっていない場合',
     },
     {
       answer: 'ハイカード',
-      cards: ['C02.png', 'D03.png', 'HQ.png', 'SK.png', 'CA.png'],
+      cards: notStraightList2,
       description: '特殊ケース_ストレートに見えるが、つながっていない場合',
     },
     {
       answer: 'ハイカード',
-      cards: ['C02.png', 'DJ.png', 'HQ.png', 'SK.png', 'CA.png'],
+      cards: notStraightList3,
       description: '特殊ケース_ストレートに見えるが、つながっていない場合',
     },
   ])(
@@ -259,12 +275,12 @@ describe('解答ボタン押下後', () => {
   test.each([
     {
       answer: 'ロイヤルフラッシュ',
-      cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'],
+      cards: royalFlashList,
       description: '正解',
     },
     {
       answer: 'ハイカード',
-      cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'],
+      cards: royalFlashList,
       description: '不正解',
     },
   ])('$description の判定が表示される', async ({ answer, cards, description }) => {
@@ -284,7 +300,7 @@ describe('解答ボタン押下後', () => {
   describe('採点機能', () => {
     describe('イージーモード', () => {
       test('不正解の時は0点が表示される', async () => {
-        const cards = ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'];
+        const cards = highCardsList;
         const cardPaths = cards.map(c => `cards/${c}`);
         vi.mocked(getUniqueCards).mockReturnValue(cardPaths);
 
@@ -304,61 +320,61 @@ describe('解答ボタン押下後', () => {
       test.each([
         {
           answer: 'ハイカード',
-          cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'],
+          cards: highCardsList,
           score: 1,
           elapsedTime: 9000,
         },
         {
           answer: 'ワンペア',
-          cards: ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'],
+          cards: onePairList,
           score: 2,
           elapsedTime: 9000,
         },
         {
           answer: 'ツーペア',
-          cards: ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'],
+          cards: twoPairList,
           score: 3,
           elapsedTime: 9000,
         },
         {
           answer: 'スリーカード',
-          cards: ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'],
+          cards: threeOfAKindList,
           score: 5,
           elapsedTime: 9000,
         },
         {
           answer: 'ストレート',
-          cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C06.png'],
+          cards: straightList,
           score: 8,
           elapsedTime: 9000,
         },
         {
           answer: 'フラッシュ',
-          cards: ['C02.png', 'C03.png', 'C04.png', 'C05.png', 'C07.png'],
+          cards: flushList,
           score: 13,
           elapsedTime: 9000,
         },
         {
           answer: 'フルハウス',
-          cards: ['C02.png', 'D02.png', 'H04.png', 'S04.png', 'C04.png'],
+          cards: fullHouseList,
           score: 21,
           elapsedTime: 9000,
         },
         {
           answer: 'フォーカード',
-          cards: ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'],
+          cards: fourOfAKindList,
           score: 34,
           elapsedTime: 9000,
         },
         {
           answer: 'ストレートフラッシュ',
-          cards: ['D03.png', 'D04.png', 'D05.png', 'D06.png', 'D07.png'],
+          cards: straightFlushList,
           score: 55,
           elapsedTime: 9000,
         },
         {
           answer: 'ロイヤルフラッシュ',
-          cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'],
+          cards: royalFlashList,
           score: 89,
           elapsedTime: 9000,
         },
