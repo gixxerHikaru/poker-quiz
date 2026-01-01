@@ -2,6 +2,7 @@ import type { Route } from './+types/home';
 import { memo, useEffect, useState } from 'react';
 import { ANSWER, getUniqueCards } from './compornents';
 import { judgeSystemAnswer } from './judgeSystemAnswer';
+import { calculateScore } from './calculateScore';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -77,6 +78,7 @@ export default function Quiz() {
                 <>
                   <div>正解</div>
                   <div>解答時間: {elapsedTime / 1000}秒</div>
+                  <div>スコア: {calculateScore(elapsedTime, quizData.systemAnswer)}点</div>
                 </>
               ) : (
                 <>
@@ -86,6 +88,7 @@ export default function Quiz() {
                   ) : (
                     <div>解答時間: {elapsedTime / 1000}秒</div>
                   )}
+                  <div>スコア: 0点</div>
                 </>
               )}
             </>

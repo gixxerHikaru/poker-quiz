@@ -280,4 +280,108 @@ describe('解答ボタン押下後', () => {
 
     expect(await screen.findByText(description)).toBeInTheDocument();
   });
+
+  describe('採点機能', () => {
+    describe('イージーモード', () => {
+      test('不正解の時は0点が表示される', async () => {
+        const cards = ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'];
+        const cardPaths = cards.map(c => `cards/${c}`);
+        vi.mocked(getUniqueCards).mockReturnValue(cardPaths);
+
+        render(<Stub initialEntries={['/quiz']} />);
+        const user = userEvent.setup();
+
+        const answerButton = await screen.findByRole('button', { name: 'ロイヤルフラッシュ' });
+        await user.click(answerButton);
+
+        const fieldElement = await screen.findByText(/Field:/);
+        const systemAnswer = fieldElement.textContent?.split(': ')[1];
+
+        expect(screen.queryByText('正解')).toBeNull();
+        expect(screen.getByText('不正解')).toBeInTheDocument();
+        expect(screen.getByText('スコア: 0点')).toBeInTheDocument();
+      });
+      test.each([
+        {
+          answer: 'ハイカード',
+          cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'],
+          score: 1,
+          elapsedTime: 9000,
+        },
+        {
+          answer: 'ワンペア',
+          cards: ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'],
+          score: 2,
+          elapsedTime: 9000,
+        },
+        {
+          answer: 'ツーペア',
+          cards: ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'],
+          score: 3,
+          elapsedTime: 9000,
+        },
+        {
+          answer: 'スリーカード',
+          cards: ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'],
+          score: 5,
+          elapsedTime: 9000,
+        },
+        {
+          answer: 'ストレート',
+          cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C06.png'],
+          score: 8,
+          elapsedTime: 9000,
+        },
+        {
+          answer: 'フラッシュ',
+          cards: ['C02.png', 'C03.png', 'C04.png', 'C05.png', 'C07.png'],
+          score: 13,
+          elapsedTime: 9000,
+        },
+        {
+          answer: 'フルハウス',
+          cards: ['C02.png', 'D02.png', 'H04.png', 'S04.png', 'C04.png'],
+          score: 21,
+          elapsedTime: 9000,
+        },
+        {
+          answer: 'フォーカード',
+          cards: ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'],
+          score: 34,
+          elapsedTime: 9000,
+        },
+        {
+          answer: 'ストレートフラッシュ',
+          cards: ['D03.png', 'D04.png', 'D05.png', 'D06.png', 'D07.png'],
+          score: 55,
+          elapsedTime: 9000,
+        },
+        {
+          answer: 'ロイヤルフラッシュ',
+          cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'],
+          score: 89,
+          elapsedTime: 9000,
+        },
+      ])('残り1秒の時、その役の点数が表示される', ({ answer, cards, score, elapsedTime }) => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2025-12-31T12:00:00.000Z'));
+
+        const cardPaths = cards.map(c => `cards/${c}`);
+        vi.mocked(getUniqueCards).mockReturnValue(cardPaths);
+
+        render(<Stub initialEntries={['/quiz']} />);
+
+        vi.advanceTimersByTime(elapsedTime);
+
+        const answerButton = screen.getByRole('button', { name: answer });
+        fireEvent.click(answerButton);
+
+        expect(screen.getByText(`正解`)).toBeInTheDocument();
+        expect(screen.getByText(`解答時間: ${elapsedTime / 1000}秒`)).toBeInTheDocument();
+        expect(screen.getByText(`スコア: ${score}点`)).toBeInTheDocument();
+
+        vi.useRealTimers();
+      });
+    });
+  });
 });
