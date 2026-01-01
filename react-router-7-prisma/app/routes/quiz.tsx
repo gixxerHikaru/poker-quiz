@@ -84,7 +84,13 @@ export default function Quiz() {
                     {elapsedTime <= 9000 ? `${Number(remainTime.toFixed(3))}秒` : 'なし'}
                   </div>
                   <div>
-                    スコア: {calculateScore(Number(remainTime.toFixed(3)), quizData.systemAnswer)}点
+                    スコア:{' '}
+                    {Number(
+                      calculateScore(Number(remainTime.toFixed(3)), quizData.systemAnswer).toFixed(
+                        3
+                      )
+                    )}
+                    点
                   </div>
                 </>
               ) : (
