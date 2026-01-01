@@ -5,10 +5,7 @@ import { judgeSystemAnswer } from './judgeSystemAnswer';
 import { calculateScore } from './calculateScore';
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: 'New React Router App' },
-    { name: 'description', content: 'Welcome to React Router!' },
-  ];
+  return [{ title: 'クイズ画面' }, { name: 'description', content: 'Welcome to React Router!' }];
 }
 
 const CardList = memo(({ cards }) => {
