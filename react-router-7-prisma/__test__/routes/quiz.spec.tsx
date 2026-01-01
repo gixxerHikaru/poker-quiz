@@ -201,7 +201,7 @@ describe('解答ボタン押下後', () => {
       },
       {
         answer: 'ハイカード',
-        cards: ['C02.png', 'D0J.png', 'HQ.png', 'SK.png', 'CA.png'],
+        cards: ['C02.png', 'DJ.png', 'HQ.png', 'SK.png', 'CA.png'],
         description: 'ストレートに見えるが、つながっていない場合',
       },
     ])(
