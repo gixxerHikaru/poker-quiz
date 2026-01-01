@@ -1,9 +1,17 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { expect, test, describe, vi, afterEach } from 'vitest';
 import Quiz from '../../app/routes/quiz';
-import { judgeSystemAnswer } from '../../app/routes/judgeSystemAnswer';
+import { getUniqueCards } from '../../app/routes/compornents';
 import { createRoutesStub } from 'react-router';
 import { userEvent } from '@testing-library/user-event';
+
+vi.mock('../../app/routes/compornents', async importOriginal => {
+  const mod = await importOriginal();
+  return {
+    ...mod,
+    getUniqueCards: vi.fn(mod.getUniqueCards),
+  };
+});
 
 const Stub = createRoutesStub([
   {
@@ -155,81 +163,121 @@ describe('解答ボタン押下後', () => {
     expect(screen.getByText('解答時間: タイムアウト(10秒経過)')).toBeInTheDocument();
   });
 
-  describe('役判定の関数', () => {
-    test.each([
-      { answer: 'ハイカード', cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'] },
-      { answer: 'ワンペア', cards: ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'] },
-      { answer: 'ツーペア', cards: ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'] },
-      { answer: 'スリーカード', cards: ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'] },
-      { answer: 'ストレート', cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C06.png'] },
-      { answer: 'フラッシュ', cards: ['C02.png', 'C03.png', 'C04.png', 'C05.png', 'C07.png'] },
-      { answer: 'フルハウス', cards: ['C02.png', 'D02.png', 'H04.png', 'S04.png', 'C04.png'] },
-      { answer: 'フォーカード', cards: ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'] },
-      {
-        answer: 'ストレートフラッシュ',
-        cards: ['D03.png', 'D04.png', 'D05.png', 'D06.png', 'D07.png'],
-      },
-      { answer: 'ロイヤルフラッシュ', cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'] },
-    ])(
-      '$answer 配られたトランプの正しい役が画面に正解として出力される',
-      async ({ answer, cards }) => {
-        const result = await judgeSystemAnswer(cards);
-        expect(result).toBe(answer);
-      }
-    );
+  test.each([
+    {
+      answer: 'ハイカード',
+      cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'],
+      description: 'ハイカード',
+    },
+    {
+      answer: 'ワンペア',
+      cards: ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'],
+      description: 'ワンペア',
+    },
+    {
+      answer: 'ツーペア',
+      cards: ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'],
+      description: 'ツーペア',
+    },
+    {
+      answer: 'スリーカード',
+      cards: ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'],
+      description: 'スリーカード',
+    },
+    {
+      answer: 'ストレート',
+      cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C06.png'],
+      description: 'ストレート',
+    },
+    {
+      answer: 'フラッシュ',
+      cards: ['C02.png', 'C03.png', 'C04.png', 'C05.png', 'C07.png'],
+      description: 'フラッシュ',
+    },
+    {
+      answer: 'フルハウス',
+      cards: ['C02.png', 'D02.png', 'H04.png', 'S04.png', 'C04.png'],
+      description: 'フルハウス',
+    },
+    {
+      answer: 'フォーカード',
+      cards: ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'],
+      description: 'フォーカード',
+    },
+    {
+      answer: 'ストレートフラッシュ',
+      cards: ['D03.png', 'D04.png', 'D05.png', 'D06.png', 'D07.png'],
+      description: 'ストレートフラッシュ',
+    },
+    {
+      answer: 'ロイヤルフラッシュ',
+      cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'],
+      description: 'ロイヤルフラッシュ',
+    },
+    {
+      answer: 'ストレート',
+      cards: ['S10.png', 'DJ.png', 'HQ.png', 'CK.png', 'SA.png'],
+      description: '特殊ケース_エースを高値として扱うストレート',
+    },
+    {
+      answer: 'ストレート',
+      cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'CA.png'],
+      description: '特殊ケース_エースから始まるストレート',
+    },
+    {
+      answer: 'ハイカード',
+      cards: ['C02.png', 'D03.png', 'H04.png', 'SK.png', 'CA.png'],
+      description: '特殊ケース_ストレートに見えるが、つながっていない場合',
+    },
+    {
+      answer: 'ハイカード',
+      cards: ['C02.png', 'D03.png', 'HQ.png', 'SK.png', 'CA.png'],
+      description: '特殊ケース_ストレートに見えるが、つながっていない場合',
+    },
+    {
+      answer: 'ハイカード',
+      cards: ['C02.png', 'DJ.png', 'HQ.png', 'SK.png', 'CA.png'],
+      description: '特殊ケース_ストレートに見えるが、つながっていない場合',
+    },
+  ])(
+    '$description 配られたトランプの正しい役が画面に正解として出力される',
+    async ({ answer, cards }) => {
+      const cardPaths = cards.map(c => `cards/${c}`);
+      vi.mocked(getUniqueCards).mockReturnValue(cardPaths);
 
-    test.each([
-      {
-        answer: 'ストレート',
-        cards: ['S10.png', 'DJ.png', 'HQ.png', 'CK.png', 'SA.png'],
-        description: 'エースを高値として扱うストレート',
-      },
-      {
-        answer: 'ストレート',
-        cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'CA.png'],
-        description: 'エースから始まるストレート',
-      },
-      {
-        answer: 'ハイカード',
-        cards: ['C02.png', 'D03.png', 'H04.png', 'SK.png', 'CA.png'],
-        description: 'ストレートに見えるが、つながっていない場合',
-      },
-      {
-        answer: 'ハイカード',
-        cards: ['C02.png', 'D03.png', 'HQ.png', 'SK.png', 'CA.png'],
-        description: 'ストレートに見えるが、つながっていない場合',
-      },
-      {
-        answer: 'ハイカード',
-        cards: ['C02.png', 'DJ.png', 'HQ.png', 'SK.png', 'CA.png'],
-        description: 'ストレートに見えるが、つながっていない場合',
-      },
-    ])(
-      '$description 特殊ケースでも正しい役が画面に正解として出力される',
-      async ({ answer, cards }) => {
-        const result = await judgeSystemAnswer(cards);
-        expect(result).toBe(answer);
-      }
-    );
-  });
+      render(<Stub initialEntries={['/quiz']} />);
+      const user = userEvent.setup();
 
-  test('正解・不正解の判定が表示される', async () => {
+      const selectedAnswer = answer;
+      const answerButton = await screen.findByRole('button', { name: selectedAnswer });
+      await user.click(answerButton);
+
+      expect(await screen.findByText(`Field: ${selectedAnswer}`)).toBeInTheDocument();
+    }
+  );
+
+  test.each([
+    {
+      answer: 'ロイヤルフラッシュ',
+      cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'],
+      description: '正解',
+    },
+    {
+      answer: 'ハイカード',
+      cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'],
+      description: '不正解',
+    },
+  ])('$description の判定が表示される', async ({ answer, cards, description }) => {
+    const cardPaths = cards.map(c => `cards/${c}`);
+    vi.mocked(getUniqueCards).mockReturnValue(cardPaths);
+
     render(<Stub initialEntries={['/quiz']} />);
     const user = userEvent.setup();
 
-    const selectedAnswer = 'ロイヤルフラッシュ';
+    const selectedAnswer = answer;
     const answerButton = await screen.findByRole('button', { name: selectedAnswer });
     await user.click(answerButton);
 
-    const fieldElement = await screen.findByText(/Field:/);
-    const systemAnswer = fieldElement.textContent?.split(': ')[1];
-
-    if (systemAnswer === selectedAnswer) {
-      expect(screen.getByText('正解')).toBeInTheDocument();
-      expect(screen.queryByText('不正解')).toBeNull();
-    } else {
-      expect(screen.getByText('不正解')).toBeInTheDocument();
-      expect(screen.queryByText('正解')).toBeNull();
-    }
+    expect(await screen.findByText(description)).toBeInTheDocument();
   });
 });
