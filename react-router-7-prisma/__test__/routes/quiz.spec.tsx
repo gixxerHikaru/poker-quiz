@@ -494,3 +494,18 @@ describe('解答ボタン押下後', () => {
     });
   });
 });
+
+test('結果表示後、Next Gameボタンが見え、押すと再度ゲームが始まる', async () => {
+  render(<Stub initialEntries={['/quiz']} />);
+
+  const user = userEvent.setup();
+  const answerButton = await screen.findByRole('button', { name: 'ハイカード' });
+
+  await user.click(answerButton);
+
+  const nextButton = await screen.findByRole('button', { name: 'Next Game' });
+  await user.click(nextButton);
+
+  expect(await screen.findByRole('button', { name: 'ハイカード' })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Next Game' })).toBeNull();
+});

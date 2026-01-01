@@ -34,6 +34,7 @@ export default function Quiz() {
   const [elapsedTime, setElapsedTime] = useState<number>(0);
   const [remainTime, setRemainTime] = useState<number>(0);
   const [isTimeout, setIsTimeout] = useState(false);
+  const [pageReload, setPageReload] = useState(false);
 
   useEffect(() => {
     const cardsPath = getUniqueCards(5);
@@ -43,7 +44,8 @@ export default function Quiz() {
     setStartTime(Date.now());
 
     console.info('生成されたカード:', cardsPath);
-  }, []);
+    setPageReload(false);
+  }, [pageReload]);
 
   useEffect(() => {
     if (!startTime || userSelectAnswer) return;
@@ -105,6 +107,15 @@ export default function Quiz() {
                 </>
               )}
             </>
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => {
+                setUserSelectAnswer(undefined);
+                setPageReload(true);
+              }}
+            >
+              Next Game
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
