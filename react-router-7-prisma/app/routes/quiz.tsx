@@ -86,7 +86,7 @@ export default function Quiz() {
                   {isTimeout ? (
                     <div>解答時間: タイムアウト(10秒経過)</div>
                   ) : (
-                    <div>解答時間: {elapsedTime / 1000}秒</div>
+                    <div>解答時間: {Number((elapsedTime / 1000).toFixed(3))}秒</div>
                   )}
                   <div>スコア: 0点</div>
                 </>
