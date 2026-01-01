@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { expect, test, describe, vi, afterEach } from 'vitest';
-import Quiz, { judgeSystemAnswer } from '../../app/routes/quiz';
+import Quiz from '../../app/routes/quiz';
+import { judgeSystemAnswer } from '../../app/routes/judgeSystemAnswer';
 import { createRoutesStub } from 'react-router';
 import { userEvent } from '@testing-library/user-event';
 
