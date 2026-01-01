@@ -13,12 +13,12 @@ export function meta({}: Route.MetaArgs) {
 
 const CardList = memo(({ cards }) => {
   return (
-    <div className="flex gap-4">
-      <img src={cards[0]} alt="card1" className="w-24 h-auto" />
-      <img src={cards[1]} alt="card2" className="w-24 h-auto" />
-      <img src={cards[2]} alt="card3" className="w-24 h-auto" />
-      <img src={cards[3]} alt="card4" className="w-24 h-auto" />
-      <img src={cards[4]} alt="card5" className="w-24 h-auto" />
+    <div className="flex flex-wrap justify-center gap-2 sm:gap-4 px-2">
+      <img src={cards[0]} alt="card1" className="w-16 sm:w-24 h-auto" />
+      <img src={cards[1]} alt="card2" className="w-16 sm:w-24 h-auto" />
+      <img src={cards[2]} alt="card3" className="w-16 sm:w-24 h-auto" />
+      <img src={cards[3]} alt="card4" className="w-16 sm:w-24 h-auto" />
+      <img src={cards[4]} alt="card5" className="w-16 sm:w-24 h-auto" />
     </div>
   );
 });
