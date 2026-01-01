@@ -20,21 +20,76 @@ const Stub = createRoutesStub([
   },
 ]);
 
-const highCardsList = ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'];
-const onePairList = ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'];
-const twoPairList = ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'];
-const threeOfAKindList = ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'];
-const straightList = ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C06.png'];
-const flushList = ['C02.png', 'C03.png', 'C04.png', 'C05.png', 'C07.png'];
-const fullHouseList = ['C02.png', 'D02.png', 'H04.png', 'S04.png', 'C04.png'];
-const fourOfAKindList = ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'];
-const straightFlushList = ['D03.png', 'D04.png', 'D05.png', 'D06.png', 'D07.png'];
-const royalFlashList = ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'];
-const highAceStraightList = ['S10.png', 'DJ.png', 'HQ.png', 'CK.png', 'SA.png'];
-const lowAceStraightList = ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'CA.png'];
-const notStraightList1 = ['C02.png', 'D03.png', 'H04.png', 'SK.png', 'CA.png'];
-const notStraightList2 = ['C02.png', 'D03.png', 'HQ.png', 'SK.png', 'CA.png'];
-const notStraightList3 = ['C02.png', 'DJ.png', 'HQ.png', 'SK.png', 'CA.png'];
+const highCardsList = {
+  name: 'ハイカード',
+  cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C07.png'],
+  score: 1,
+};
+const onePairList = {
+  name: 'ワンペア',
+  cards: ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'],
+  score: 2,
+};
+const twoPairList = {
+  name: 'ツーペア',
+  cards: ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'],
+  score: 3,
+};
+const threeOfAKindList = {
+  name: 'スリーカード',
+  cards: ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'],
+  score: 5,
+};
+const straightList = {
+  name: 'ストレート',
+  cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'C06.png'],
+  score: 8,
+};
+const flushList = {
+  name: 'フラッシュ',
+  cards: ['C02.png', 'C03.png', 'C04.png', 'C05.png', 'C07.png'],
+  score: 13,
+};
+const fullHouseList = {
+  name: 'フルハウス',
+  cards: ['C02.png', 'D02.png', 'H04.png', 'S04.png', 'C04.png'],
+  score: 21,
+};
+const fourOfAKindList = {
+  name: 'フォーカード',
+  cards: ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'],
+  score: 34,
+};
+const straightFlushList = {
+  name: 'ストレートフラッシュ',
+  cards: ['D03.png', 'D04.png', 'D05.png', 'D06.png', 'D07.png'],
+  score: 55,
+};
+const royalFlashList = {
+  name: 'ロイヤルフラッシュ',
+  cards: ['S10.png', 'SJ.png', 'SQ.png', 'SK.png', 'SA.png'],
+  score: 89,
+};
+const highAceStraightList = {
+  name: 'ストレート',
+  cards: ['S10.png', 'DJ.png', 'HQ.png', 'CK.png', 'SA.png'],
+};
+const lowAceStraightList = {
+  name: 'ストレート',
+  cards: ['C02.png', 'D03.png', 'H04.png', 'S05.png', 'CA.png'],
+};
+const notStraightList1 = {
+  name: 'ハイカード',
+  cards: ['C02.png', 'D03.png', 'H04.png', 'SK.png', 'CA.png'],
+};
+const notStraightList2 = {
+  name: 'ハイカード',
+  cards: ['C02.png', 'D03.png', 'HQ.png', 'SK.png', 'CA.png'],
+};
+const notStraightList3 = {
+  name: 'ハイカード',
+  cards: ['C02.png', 'DJ.png', 'HQ.png', 'SK.png', 'CA.png'],
+};
 
 vi.setConfig({ testTimeout: 15000 });
 
@@ -181,90 +236,75 @@ describe('解答ボタン押下後', () => {
 
   test.each([
     {
-      answer: 'ハイカード',
-      cards: highCardsList,
+      ...highCardsList,
       description: 'ハイカード',
     },
     {
-      answer: 'ワンペア',
-      cards: onePairList,
+      ...onePairList,
       description: 'ワンペア',
     },
     {
-      answer: 'ツーペア',
-      cards: twoPairList,
+      ...twoPairList,
       description: 'ツーペア',
     },
     {
-      answer: 'スリーカード',
-      cards: threeOfAKindList,
+      ...threeOfAKindList,
       description: 'スリーカード',
     },
     {
-      answer: 'ストレート',
-      cards: straightList,
+      ...straightList,
       description: 'ストレート',
     },
     {
-      answer: 'フラッシュ',
-      cards: flushList,
+      ...flushList,
       description: 'フラッシュ',
     },
     {
-      answer: 'フルハウス',
-      cards: fullHouseList,
+      ...fullHouseList,
       description: 'フルハウス',
     },
     {
-      answer: 'フォーカード',
-      cards: fourOfAKindList,
+      ...fourOfAKindList,
       description: 'フォーカード',
     },
     {
-      answer: 'ストレートフラッシュ',
-      cards: straightFlushList,
+      ...straightFlushList,
       description: 'ストレートフラッシュ',
     },
     {
-      answer: 'ロイヤルフラッシュ',
-      cards: royalFlashList,
+      ...royalFlashList,
       description: 'ロイヤルフラッシュ',
     },
     {
-      answer: 'ストレート',
-      cards: highAceStraightList,
+      ...highAceStraightList,
       description: '特殊ケース_エースを高値として扱うストレート',
     },
     {
-      answer: 'ストレート',
-      cards: lowAceStraightList,
+      ...lowAceStraightList,
       description: '特殊ケース_エースから始まるストレート',
     },
     {
-      answer: 'ハイカード',
-      cards: notStraightList1,
+      ...notStraightList1,
       description: '特殊ケース_ストレートに見えるが、つながっていない場合',
     },
     {
-      answer: 'ハイカード',
-      cards: notStraightList2,
+      ...notStraightList2,
       description: '特殊ケース_ストレートに見えるが、つながっていない場合',
     },
     {
-      answer: 'ハイカード',
-      cards: notStraightList3,
+      ...notStraightList3,
       description: '特殊ケース_ストレートに見えるが、つながっていない場合',
     },
   ])(
     '$description 配られたトランプの正しい役が画面に正解として出力される',
-    async ({ answer, cards }) => {
+    async ({ name, cards }) => {
       const cardPaths = cards.map(c => `cards/${c}`);
       vi.mocked(getUniqueCards).mockReturnValue(cardPaths);
 
       render(<Stub initialEntries={['/quiz']} />);
       const user = userEvent.setup();
 
-      const selectedAnswer = answer;
+      const selectedAnswer = name;
       const answerButton = await screen.findByRole('button', { name: selectedAnswer });
       await user.click(answerButton);
 
@@ -275,12 +315,12 @@ describe('解答ボタン押下後', () => {
   test.each([
     {
       answer: 'ロイヤルフラッシュ',
-      cards: royalFlashList,
+      cards: royalFlashList.cards,
       description: '正解',
     },
     {
       answer: 'ハイカード',
-      cards: royalFlashList,
+      cards: royalFlashList.cards,
       description: '不正解',
     },
   ])('$description の判定が表示される', async ({ answer, cards, description }) => {
@@ -300,8 +340,7 @@ describe('解答ボタン押下後', () => {
   describe('採点機能', () => {
     describe('イージーモード', () => {
       test('不正解の時は0点が表示される', async () => {
-        const cards = highCardsList;
-        const cardPaths = cards.map(c => `cards/${c}`);
+        const cardPaths = highCardsList.cards.map(c => `cards/${c}`);
         vi.mocked(getUniqueCards).mockReturnValue(cardPaths);
 
         render(<Stub initialEntries={['/quiz']} />);
@@ -310,75 +349,24 @@ describe('解答ボタン押下後', () => {
         const answerButton = await screen.findByRole('button', { name: 'ロイヤルフラッシュ' });
         await user.click(answerButton);
 
-        const fieldElement = await screen.findByText(/Field:/);
-        const systemAnswer = fieldElement.textContent?.split(': ')[1];
+        await screen.findByText(/Field:/);
 
         expect(screen.queryByText('正解')).toBeNull();
         expect(screen.getByText('不正解')).toBeInTheDocument();
         expect(screen.getByText('スコア: 0点')).toBeInTheDocument();
       });
       test.each([
-        {
-          answer: 'ハイカード',
-          cards: highCardsList,
-          score: 1,
-          elapsedTime: 9000,
-        },
-        {
-          answer: 'ワンペア',
-          cards: onePairList,
-          score: 2,
-          elapsedTime: 9000,
-        },
-        {
-          answer: 'ツーペア',
-          cards: twoPairList,
-          score: 3,
-          elapsedTime: 9000,
-        },
-        {
-          answer: 'スリーカード',
-          cards: threeOfAKindList,
-          score: 5,
-          elapsedTime: 9000,
-        },
-        {
-          answer: 'ストレート',
-          cards: straightList,
-          score: 8,
-          elapsedTime: 9000,
-        },
-        {
-          answer: 'フラッシュ',
-          cards: flushList,
-          score: 13,
-          elapsedTime: 9000,
-        },
-        {
-          answer: 'フルハウス',
-          cards: fullHouseList,
-          score: 21,
-          elapsedTime: 9000,
-        },
-        {
-          answer: 'フォーカード',
-          cards: fourOfAKindList,
-          score: 34,
-          elapsedTime: 9000,
-        },
-        {
-          answer: 'ストレートフラッシュ',
-          cards: straightFlushList,
-          score: 55,
-          elapsedTime: 9000,
-        },
-        {
-          answer: 'ロイヤルフラッシュ',
-          cards: royalFlashList,
-          score: 89,
-          elapsedTime: 9000,
-        },
-      ])('残り1秒の時、その役の点数が表示される', ({ answer, cards, score, elapsedTime }) => {
+        { ...highCardsList, elapsedTime: 9000 },
+        { ...onePairList, elapsedTime: 9000 },
+        { ...twoPairList, elapsedTime: 9000 },
+        { ...threeOfAKindList, elapsedTime: 9000 },
+        { ...straightList, elapsedTime: 9000 },
+        { ...flushList, elapsedTime: 9000 },
+        { ...fullHouseList, elapsedTime: 9000 },
+        { ...fourOfAKindList, elapsedTime: 9000 },
+        { ...straightFlushList, elapsedTime: 9000 },
+        { ...royalFlashList, elapsedTime: 9000 },
+      ])('残り1秒の時、その役の点数が表示される', ({ name, cards, score, elapsedTime }) => {
         vi.useFakeTimers();
         vi.setSystemTime(new Date('2025-12-31T12:00:00.000Z'));
 
@@ -389,7 +377,7 @@ describe('解答ボタン押下後', () => {
 
         vi.advanceTimersByTime(elapsedTime);
 
-        const answerButton = screen.getByRole('button', { name: answer });
+        const answerButton = screen.getByRole('button', { name });
         fireEvent.click(answerButton);
 
         expect(screen.getByText(`正解`)).toBeInTheDocument();
