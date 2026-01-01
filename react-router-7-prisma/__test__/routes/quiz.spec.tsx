@@ -214,6 +214,35 @@ describe('解答ボタン押下後', () => {
     vi.useRealTimers();
   });
 
+  test.each([
+    { advanceTime: 1000, remainTime: '9秒' },
+    { advanceTime: 2222, remainTime: '7.778秒' },
+    { advanceTime: 3333, remainTime: '6.667秒' },
+    { advanceTime: 9000, remainTime: '1秒' },
+    { advanceTime: 9999, remainTime: 'なし', description: 'ボーナス時間が1秒を切っている時は0' },
+  ])(
+    'ボーナス時間(解答時間の残り時間)が表示される_$description ',
+    ({ advanceTime, remainTime }) => {
+      vi.useFakeTimers();
+
+      vi.mocked(getUniqueCards).mockReturnValue(highCardsList.cards.map(c => `cards/${c}`));
+
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime, delay: null });
+      const startTime = '2025-12-31T12:00:00.000Z';
+      vi.setSystemTime(new Date(startTime));
+      render(<Stub initialEntries={['/quiz']} />);
+
+      const answerButton = screen.getByRole('button', { name: 'ハイカード' });
+      vi.advanceTimersByTime(advanceTime);
+      fireEvent.click(answerButton);
+      vi.advanceTimersByTime(1000);
+
+      expect(screen.getByText(`ボーナス時間: ${remainTime}`)).toBeInTheDocument();
+
+      vi.useRealTimers();
+    }
+  );
+
   test('手札表示から10秒経過するとタイムアウトされ、無回答になる', () => {
     vi.useFakeTimers();
 
@@ -355,6 +384,7 @@ describe('解答ボタン押下後', () => {
         expect(screen.getByText('不正解')).toBeInTheDocument();
         expect(screen.getByText('スコア: 0点')).toBeInTheDocument();
       });
+
       test.each([
         { ...highCardsList, elapsedTime: 9000 },
         { ...onePairList, elapsedTime: 9000 },
@@ -386,6 +416,81 @@ describe('解答ボタン押下後', () => {
 
         vi.useRealTimers();
       });
+
+      test.each([
+        { ...highCardsList, advanceTime: 1000, remainTime: '9秒', score: 9, description: '整数' },
+        { ...onePairList, advanceTime: 2000, remainTime: '8秒', score: 16, description: '整数' },
+        { ...twoPairList, advanceTime: 3000, remainTime: '7秒', score: 21, description: '整数' },
+        {
+          ...threeOfAKindList,
+          advanceTime: 4000,
+          remainTime: '6秒',
+          score: 30,
+          description: '整数',
+        },
+        { ...straightList, advanceTime: 5000, remainTime: '5秒', score: 40, description: '整数' },
+        { ...flushList, advanceTime: 6000, remainTime: '4秒', score: 52, description: '整数' },
+        { ...fullHouseList, advanceTime: 7000, remainTime: '3秒', score: 63, description: '整数' },
+        {
+          ...fourOfAKindList,
+          advanceTime: 8000,
+          remainTime: '2秒',
+          score: 68,
+          description: '整数',
+        },
+        {
+          ...straightFlushList,
+          advanceTime: 9000,
+          remainTime: '1秒',
+          score: 55,
+          description: '整数',
+        },
+        { ...royalFlashList, advanceTime: 9000, remainTime: '1秒', score: 89, description: '整数' },
+
+        {
+          ...highCardsList,
+          advanceTime: 9999,
+          remainTime: 'なし',
+          score: 1,
+          description: 'ボーナス時間が1秒を切っている場合は掛け算をしない',
+        },
+        {
+          ...highCardsList,
+          advanceTime: 7777,
+          remainTime: '2.223秒',
+          score: 2.223,
+          description: '少数',
+        },
+        {
+          ...royalFlashList,
+          advanceTime: 5555,
+          remainTime: '4.445秒',
+          score: 395.605,
+          description: '整数',
+        },
+      ])(
+        '$description ボーナス時間とその役の点数を掛け合わせたものが表示される',
+        ({ name, cards, score, advanceTime, remainTime }) => {
+          vi.useFakeTimers();
+          vi.setSystemTime(new Date('2025-12-31T12:00:00.000Z'));
+
+          const cardPaths = cards.map(c => `cards/${c}`);
+          vi.mocked(getUniqueCards).mockReturnValue(cardPaths);
+
+          render(<Stub initialEntries={['/quiz']} />);
+
+          vi.advanceTimersByTime(advanceTime);
+
+          const answerButton = screen.getByRole('button', { name });
+          fireEvent.click(answerButton);
+
+          expect(screen.getByText(`正解`)).toBeInTheDocument();
+          expect(screen.getByText(`ボーナス時間: ${remainTime}`)).toBeInTheDocument();
+          expect(screen.getByText(`スコア: ${score}点`)).toBeInTheDocument();
+
+          vi.useRealTimers();
+        }
+      );
     });
   });
 });

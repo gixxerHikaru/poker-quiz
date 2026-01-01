@@ -1,37 +1,39 @@
 import { SUITS, RANKS } from './compornents';
 import { getUniqueCards } from './compornents';
 
-export function calculateScore(time, systemAnswer) {
+export function calculateScore(remainTime, systemAnswer) {
+  if (remainTime < 1) remainTime = 1;
+
   switch (systemAnswer) {
     case 'ハイカード':
-      return 1;
+      return remainTime * 1;
       break;
     case 'ワンペア':
-      return 2;
+      return remainTime * 2;
       break;
     case 'ツーペア':
-      return 3;
+      return remainTime * 3;
       break;
     case 'スリーカード':
-      return 5;
+      return remainTime * 5;
       break;
     case 'ストレート':
-      return 8;
+      return remainTime * 8;
       break;
     case 'フラッシュ':
-      return 13;
+      return remainTime * 13;
       break;
     case 'フルハウス':
-      return 21;
+      return remainTime * 21;
       break;
     case 'フォーカード':
-      return 34;
+      return remainTime * 34;
       break;
     case 'ストレートフラッシュ':
-      return 55;
+      return remainTime * 55;
       break;
     case 'ロイヤルフラッシュ':
-      return 89;
+      return remainTime * 89;
       break;
     default:
       return 0;

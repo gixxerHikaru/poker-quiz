@@ -32,6 +32,7 @@ export default function Quiz() {
   const [userSelectAnswer, setUserSelectAnswer] = useState<string | undefined>();
   const [startTime, setStartTime] = useState<number>(0);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [remainTime, setRemainTime] = useState<number>(0);
   const [isTimeout, setIsTimeout] = useState(false);
 
   useEffect(() => {
@@ -77,8 +78,14 @@ export default function Quiz() {
               {userSelectAnswer == quizData.systemAnswer ? (
                 <>
                   <div>正解</div>
-                  <div>解答時間: {elapsedTime / 1000}秒</div>
-                  <div>スコア: {calculateScore(elapsedTime, quizData.systemAnswer)}点</div>
+                  <div>解答時間: {Number((elapsedTime / 1000).toFixed(3))}秒</div>
+                  <div>
+                    ボーナス時間:{' '}
+                    {elapsedTime <= 9000 ? `${Number(remainTime.toFixed(3))}秒` : 'なし'}
+                  </div>
+                  <div>
+                    スコア: {calculateScore(Number(remainTime.toFixed(3)), quizData.systemAnswer)}点
+                  </div>
                 </>
               ) : (
                 <>
@@ -102,6 +109,7 @@ export default function Quiz() {
                 onClick={() => {
                   setUserSelectAnswer(answerName);
                   setElapsedTime(Date.now() - startTime);
+                  setRemainTime((10000 - (Date.now() - startTime)) / 1000);
                 }}
               >
                 {answerName}
