@@ -516,34 +516,10 @@ test('計5回ゲームをしたら、Next GameボタンがResultボタンとな�
   vi.setSystemTime(new Date(startTime));
   render(<Stub initialEntries={['/quiz']} />);
 
-  screen.getByRole('button', { name: 'ハイカード' });
-  act(() => {
-    vi.advanceTimersByTime(10000);
-  });
-  screen.getByText('Your Answer: Time Out');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
-
-  screen.getByRole('button', { name: 'ハイカード' });
-  act(() => {
-    vi.advanceTimersByTime(10000);
-  });
-  screen.getByText('Your Answer: Time Out');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
-
-  screen.getByRole('button', { name: 'ハイカード' });
-  act(() => {
-    vi.advanceTimersByTime(10000);
-  });
-  screen.getByText('Your Answer: Time Out');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
-
-  screen.getByRole('button', { name: 'ハイカード' });
-  act(() => {
-    vi.advanceTimersByTime(10000);
-  });
-  screen.getByText('Your Answer: Time Out');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
-
+  notAsyncHighCardsAndNextButtonPush();
+  notAsyncHighCardsAndNextButtonPush();
+  notAsyncHighCardsAndNextButtonPush();
+  notAsyncHighCardsAndNextButtonPush();
   screen.getByRole('button', { name: 'ハイカード' });
   act(() => {
     vi.advanceTimersByTime(10000);
@@ -552,3 +528,12 @@ test('計5回ゲームをしたら、Next GameボタンがResultボタンとな�
   expect(screen.queryByRole('button', { name: 'Next Game' })).toBeNull();
   expect(screen.getByRole('button', { name: 'Result' })).toBeInTheDocument();
 });
+
+function notAsyncHighCardsAndNextButtonPush() {
+  screen.getByRole('button', { name: 'ハイカード' });
+  act(() => {
+    vi.advanceTimersByTime(10000);
+  });
+  screen.getByText('Your Answer: Time Out');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+}

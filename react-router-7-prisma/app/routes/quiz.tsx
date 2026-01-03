@@ -33,7 +33,7 @@ export default function Quiz() {
   const [isTimeout, setIsTimeout] = useState(false);
   const [pageReload, setPageReload] = useState(false);
   const [gameCount, setGameCount] = useState<number>(1);
-  const [gameCountFlag, setGameCountFlag] = useState<number>(false);
+  const [gameCountFlag, setGameCountFlag] = useState<boolean>(false);
 
   useEffect(() => {
     const cardsPath = getUniqueCards(5);
