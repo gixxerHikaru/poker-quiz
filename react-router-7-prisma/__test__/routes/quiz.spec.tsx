@@ -1,9 +1,10 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import Quiz from '../../app/routes/quiz';
 import { getUniqueCards } from '../../app/routes/compornents';
 import { createRoutesStub } from 'react-router';
 import { userEvent } from '@testing-library/user-event';
+import Home from '../../app/routes/home';
 
 vi.mock('../../app/routes/compornents', async importOriginal => {
   const mod = await importOriginal();
@@ -510,7 +511,18 @@ test('結果表示後、Next Gameボタンが見え、押すと再度ゲーム�
   expect(screen.queryByRole('button', { name: 'Next Game' })).toBeNull();
 });
 
-test('計5回ゲームをしたら、Next GameボタンがResultボタンとなって現れる', () => {
+test('計5回ゲームをしたら、結果表示画面で結果を確認でき、ホームに戻るボタンでホームに戻れる', () => {
+  const Stub = createRoutesStub([
+    {
+      path: '/',
+      Component: Home,
+    },
+    {
+      path: '/quiz',
+      Component: Quiz,
+    },
+  ]);
+
   vi.useFakeTimers();
   const startTime = '2025-01-03T12:00:00.000Z';
   vi.setSystemTime(new Date(startTime));
@@ -526,7 +538,187 @@ test('計5回ゲームをしたら、Next GameボタンがResultボタンとな�
   });
   screen.getByText('Your Answer: Time Out');
   expect(screen.queryByRole('button', { name: 'Next Game' })).toBeNull();
-  expect(screen.getByRole('button', { name: 'Result' })).toBeInTheDocument();
+
+  const resultButton = screen.getByRole('button', { name: 'Result' });
+  expect(resultButton).toBeInTheDocument();
+  fireEvent.click(resultButton);
+
+  expect(screen.getByText('クイズ結果')).toBeInTheDocument();
+
+  const round1 = screen.getByTestId('round-1');
+  expect(within(round1).getByText('Round1')).toBeInTheDocument();
+  expect(within(round1).getByText('0点')).toBeInTheDocument();
+
+  const round2 = screen.getByTestId('round-2');
+  expect(within(round2).getByText('Round2')).toBeInTheDocument();
+  expect(within(round2).getByText('0点')).toBeInTheDocument();
+
+  const round3 = screen.getByTestId('round-3');
+  expect(within(round3).getByText('Round3')).toBeInTheDocument();
+  expect(within(round3).getByText('0点')).toBeInTheDocument();
+
+  const round4 = screen.getByTestId('round-4');
+  expect(within(round4).getByText('Round4')).toBeInTheDocument();
+  expect(within(round4).getByText('0点')).toBeInTheDocument();
+
+  const round5 = screen.getByTestId('round-5');
+  expect(within(round5).getByText('Round5')).toBeInTheDocument();
+  expect(within(round5).getByText('0点')).toBeInTheDocument();
+
+  const total = screen.getByTestId('total');
+  expect(within(total).getByText('合計')).toBeInTheDocument();
+  expect(within(total).getByText('0点')).toBeInTheDocument();
+  const backButton = screen.getByRole('button', { name: 'ホームに戻る' });
+  expect(backButton).toBeInTheDocument();
+
+  fireEvent.click(backButton);
+  expect(screen.getByText('Poker Quiz')).toBeInTheDocument();
+});
+
+test('5回ゲームを行い、正解と不正解が混ざった場合の結果を確認できる', () => {
+  vi.useFakeTimers();
+  const startTime = '2025-01-03T12:00:00.000Z';
+  vi.setSystemTime(new Date(startTime));
+
+  const mockGetUniqueCards = vi.mocked(getUniqueCards);
+  mockGetUniqueCards
+    .mockReturnValueOnce(highCardsList.cards.map(c => `cards/${c}`))
+    .mockReturnValueOnce(onePairList.cards.map(c => `cards/${c}`))
+    .mockReturnValueOnce(twoPairList.cards.map(c => `cards/${c}`))
+    .mockReturnValueOnce(flushList.cards.map(c => `cards/${c}`))
+    .mockReturnValueOnce(fullHouseList.cards.map(c => `cards/${c}`));
+
+  render(<Stub initialEntries={['/quiz']} />);
+
+  screen.getByRole('button', { name: 'ハイカード' });
+  vi.advanceTimersByTime(1111);
+  fireEvent.click(screen.getByRole('button', { name: 'ハイカード' }));
+  screen.getByText('正解');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'ワンペア' });
+  vi.advanceTimersByTime(2000);
+  fireEvent.click(screen.getByRole('button', { name: 'ワンペア' }));
+  screen.getByText('正解');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'ツーペア' });
+  vi.advanceTimersByTime(2000);
+  fireEvent.click(screen.getByRole('button', { name: 'ツーペア' }));
+  screen.getByText('正解');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'フラッシュ' });
+  vi.advanceTimersByTime(5000);
+  fireEvent.click(screen.getByRole('button', { name: 'フラッシュ' }));
+  screen.getByText('正解');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'フルハウス' });
+  vi.advanceTimersByTime(1000);
+  fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
+  screen.getByText('不正解');
+  const resultButton = screen.getByRole('button', { name: 'Result' });
+  fireEvent.click(resultButton);
+
+  screen.getByText('クイズ結果');
+
+  const round1 = screen.getByTestId('round-1');
+  expect(within(round1).getByText('Round1')).toBeInTheDocument();
+  expect(within(round1).getByText('8.889点')).toBeInTheDocument();
+
+  const round2 = screen.getByTestId('round-2');
+  expect(within(round2).getByText('Round2')).toBeInTheDocument();
+  expect(within(round2).getByText('16点')).toBeInTheDocument();
+
+  const round3 = screen.getByTestId('round-3');
+  expect(within(round3).getByText('Round3')).toBeInTheDocument();
+  expect(within(round3).getByText('24点')).toBeInTheDocument();
+
+  const round4 = screen.getByTestId('round-4');
+  expect(within(round4).getByText('Round4')).toBeInTheDocument();
+  expect(within(round4).getByText('65点')).toBeInTheDocument();
+
+  const round5 = screen.getByTestId('round-5');
+  expect(within(round5).getByText('Round5')).toBeInTheDocument();
+  expect(within(round5).getByText('0点')).toBeInTheDocument();
+
+  const total = screen.getByTestId('total');
+  expect(within(total).getByText('合計')).toBeInTheDocument();
+  expect(within(total).getByText('113.889点')).toBeInTheDocument();
+});
+
+test('5回とも不正解（選択ミス）だった場合の結果を確認できる', () => {
+  vi.useFakeTimers();
+  const startTime = '2025-01-03T12:00:00.000Z';
+  vi.setSystemTime(new Date(startTime));
+
+  const mockGetUniqueCards = vi.mocked(getUniqueCards);
+  mockGetUniqueCards
+    .mockReturnValueOnce(highCardsList.cards.map(c => `cards/${c}`))
+    .mockReturnValueOnce(onePairList.cards.map(c => `cards/${c}`))
+    .mockReturnValueOnce(twoPairList.cards.map(c => `cards/${c}`))
+    .mockReturnValueOnce(flushList.cards.map(c => `cards/${c}`))
+    .mockReturnValueOnce(fullHouseList.cards.map(c => `cards/${c}`));
+
+  render(<Stub initialEntries={['/quiz']} />);
+
+  screen.getByRole('button', { name: 'ハイカード' });
+  vi.advanceTimersByTime(1000);
+  fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
+  screen.getByText('不正解');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'ワンペア' });
+  vi.advanceTimersByTime(1000);
+  fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
+  screen.getByText('不正解');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'ツーペア' });
+  vi.advanceTimersByTime(1000);
+  fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
+  screen.getByText('不正解');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'フラッシュ' });
+  vi.advanceTimersByTime(1000);
+  fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
+  screen.getByText('不正解');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'フルハウス' });
+  vi.advanceTimersByTime(1000);
+  fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
+
+  const resultButton = screen.getByRole('button', { name: 'Result' });
+  fireEvent.click(resultButton);
+
+  screen.getByText('クイズ結果');
+
+  const round1 = screen.getByTestId('round-1');
+  expect(within(round1).getByText('Round1')).toBeInTheDocument();
+  expect(within(round1).getByText('0点')).toBeInTheDocument();
+
+  const round2 = screen.getByTestId('round-2');
+  expect(within(round2).getByText('Round2')).toBeInTheDocument();
+  expect(within(round2).getByText('0点')).toBeInTheDocument();
+
+  const round3 = screen.getByTestId('round-3');
+  expect(within(round3).getByText('Round3')).toBeInTheDocument();
+  expect(within(round3).getByText('0点')).toBeInTheDocument();
+
+  const round4 = screen.getByTestId('round-4');
+  expect(within(round4).getByText('Round4')).toBeInTheDocument();
+  expect(within(round4).getByText('0点')).toBeInTheDocument();
+
+  const round5 = screen.getByTestId('round-5');
+  expect(within(round5).getByText('Round5')).toBeInTheDocument();
+  expect(within(round5).getByText('0点')).toBeInTheDocument();
+
+  const total = screen.getByTestId('total');
+  expect(within(total).getByText('合計')).toBeInTheDocument();
+  expect(within(total).getByText('0点')).toBeInTheDocument();
 });
 
 function notAsyncHighCardsAndNextButtonPush() {
