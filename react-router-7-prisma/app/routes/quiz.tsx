@@ -32,6 +32,8 @@ export default function Quiz() {
   const [remainTime, setRemainTime] = useState<number>(0);
   const [isTimeout, setIsTimeout] = useState(false);
   const [pageReload, setPageReload] = useState(false);
+  const [gameCount, setGameCount] = useState<number>(1);
+  const [gameCountFlag, setGameCountFlag] = useState<number>(false);
 
   useEffect(() => {
     const cardsPath = getUniqueCards(5);
@@ -40,6 +42,7 @@ export default function Quiz() {
     setQuizData({ cardsPath, systemAnswer });
     setStartTime(Date.now());
 
+    console.info('ラウンド:', gameCount);
     console.info('生成されたカード:', cardsPath);
     setPageReload(false);
   }, [pageReload]);
@@ -54,6 +57,10 @@ export default function Quiz() {
 
     return () => clearTimeout(timer);
   }, [startTime, userSelectAnswer]);
+
+  useEffect(() => {
+    if (gameCount >= 5) setGameCountFlag(true);
+  }, [gameCount]);
 
   if (!quizData)
     return (
@@ -104,15 +111,27 @@ export default function Quiz() {
                 </>
               )}
             </>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() => {
-                setUserSelectAnswer(undefined);
-                setPageReload(true);
-              }}
-            >
-              Next Game
-            </button>
+            {gameCountFlag ? (
+              <button
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => {
+                  window.location.href = '/';
+                }}
+              >
+                Result
+              </button>
+            ) : (
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => {
+                  setUserSelectAnswer(undefined);
+                  setGameCount(gameCount + 1);
+                  setPageReload(true);
+                }}
+              >
+                Next Game
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">

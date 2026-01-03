@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import { expect, test, describe, vi, afterEach } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import Quiz from '../../app/routes/quiz';
 import { getUniqueCards } from '../../app/routes/compornents';
 import { createRoutesStub } from 'react-router';
@@ -508,4 +508,47 @@ test('結果表示後、Next Gameボタンが見え、押すと再度ゲーム�
 
   expect(await screen.findByRole('button', { name: 'ハイカード' })).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Next Game' })).toBeNull();
+});
+
+test('計5回ゲームをしたら、Next GameボタンがResultボタンとなって現れる', () => {
+  vi.useFakeTimers();
+  const startTime = '2025-01-03T12:00:00.000Z';
+  vi.setSystemTime(new Date(startTime));
+  render(<Stub initialEntries={['/quiz']} />);
+
+  screen.getByRole('button', { name: 'ハイカード' });
+  act(() => {
+    vi.advanceTimersByTime(10000);
+  });
+  screen.getByText('Your Answer: Time Out');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'ハイカード' });
+  act(() => {
+    vi.advanceTimersByTime(10000);
+  });
+  screen.getByText('Your Answer: Time Out');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'ハイカード' });
+  act(() => {
+    vi.advanceTimersByTime(10000);
+  });
+  screen.getByText('Your Answer: Time Out');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'ハイカード' });
+  act(() => {
+    vi.advanceTimersByTime(10000);
+  });
+  screen.getByText('Your Answer: Time Out');
+  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+
+  screen.getByRole('button', { name: 'ハイカード' });
+  act(() => {
+    vi.advanceTimersByTime(10000);
+  });
+  screen.getByText('Your Answer: Time Out');
+  expect(screen.queryByRole('button', { name: 'Next Game' })).toBeNull();
+  expect(screen.getByRole('button', { name: 'Result' })).toBeInTheDocument();
 });
