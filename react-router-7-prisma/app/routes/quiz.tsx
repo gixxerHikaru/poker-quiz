@@ -1,6 +1,6 @@
 import type { Route } from './+types/home';
 import { memo, useEffect, useState } from 'react';
-import { ANSWER, getUniqueCards } from './compornents';
+import { ANSWER, getUniqueCards } from './components';
 import { judgeSystemAnswer } from './judgeSystemAnswer';
 import { calculateScore } from './calculateScore';
 import { useNavigate } from 'react-router';

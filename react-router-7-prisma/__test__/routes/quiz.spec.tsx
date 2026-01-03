@@ -1,12 +1,12 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import Quiz from '../../app/routes/quiz';
-import { getUniqueCards } from '../../app/routes/compornents';
+import { getUniqueCards } from '../../app/routes/components';
 import { createRoutesStub } from 'react-router';
 import { userEvent } from '@testing-library/user-event';
 import Home from '../../app/routes/home';
 
-vi.mock('../../app/routes/compornents', async importOriginal => {
+vi.mock('../../app/routes/components', async importOriginal => {
   const mod = await importOriginal();
   return {
     ...mod,

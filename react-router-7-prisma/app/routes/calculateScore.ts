@@ -1,6 +1,3 @@
-import { SUITS, RANKS } from './compornents';
-import { getUniqueCards } from './compornents';
-
 export function calculateScore(remainTime, systemAnswer) {
   if (remainTime < 1) remainTime = 1;
 
