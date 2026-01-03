@@ -31,7 +31,6 @@ export default function Quiz() {
   const [elapsedTime, setElapsedTime] = useState<number>(0);
   const [remainTime, setRemainTime] = useState<number>(0);
   const [isTimeout, setIsTimeout] = useState(false);
-  const [pageReload, setPageReload] = useState(false);
   const [gameCount, setGameCount] = useState<number>(1);
   const [gameCountFlag, setGameCountFlag] = useState<boolean>(false);
 
@@ -41,11 +40,13 @@ export default function Quiz() {
 
     setQuizData({ cardsPath, systemAnswer });
     setStartTime(Date.now());
+    setIsTimeout(false);
+    setElapsedTime(0);
+    setRemainTime(0);
 
     console.info('ラウンド:', gameCount);
     console.info('生成されたカード:', cardsPath);
-    setPageReload(false);
-  }, [pageReload]);
+  }, [gameCount]);
 
   useEffect(() => {
     if (!startTime || userSelectAnswer) return;
@@ -126,7 +127,6 @@ export default function Quiz() {
                 onClick={() => {
                   setUserSelectAnswer(undefined);
                   setGameCount(gameCount + 1);
-                  setPageReload(true);
                 }}
               >
                 Next Game
