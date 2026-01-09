@@ -34,6 +34,25 @@ test('タイトル下にカードが3枚見える', () => {
   expect(card3).toBeDefined();
 });
 
+test('ゲーム説明ボタンが見え、ボタンを押すとゲーム説明のモーダルが表示される。閉じるボタンを押すとモーダルが見えなくなる。', async () => {
+  const user = userEvent.setup();
+
+  render(<Stub initialEntries={['/']} />);
+
+  const gameExplainButton = await screen.findByRole('button', { name: 'ルール説明' });
+
+  expect(gameExplainButton).toBeInTheDocument();
+
+  await user.click(gameExplainButton);
+
+  const modal = await screen.findByText('ゲーム説明');
+  expect(modal).toBeInTheDocument();
+
+  const closeButton = await screen.findByRole('button', { name: '閉じる' });
+  await user.click(closeButton);
+  expect(modal).not.toBeInTheDocument();
+});
+
 test('スタートボタンが見え、ボタンを押すとクイズ画面に遷移する', async () => {
   const user = userEvent.setup();
 
