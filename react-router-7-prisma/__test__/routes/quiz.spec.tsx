@@ -239,8 +239,7 @@ describe('解答ボタン押下後', () => {
       fireEvent.click(answerButton);
       vi.advanceTimersByTime(1000);
 
-      expect(screen.getByText(`ボーナス時間`)).toBeInTheDocument();
-      expect(screen.getByText(`${remainTime}`)).toBeInTheDocument();
+      expect(screen.getByText(`ボーナス時間: ${remainTime}`)).toBeInTheDocument();
 
       vi.useRealTimers();
     }
@@ -418,6 +417,7 @@ describe('解答ボタン押下後', () => {
         expect(screen.getByText(`正解`)).toBeInTheDocument();
         expect(screen.getByText(`解答時間`)).toBeInTheDocument();
         expect(screen.getByText(`${elapsedTime / 1000}秒`)).toBeInTheDocument();
+        expect(screen.getByText(`${name}: ${score}点`));
         expect(screen.getByText(`スコア`)).toBeInTheDocument();
         expect(screen.getByText(`${score}点`)).toBeInTheDocument();
 
@@ -492,11 +492,11 @@ describe('解答ボタン押下後', () => {
           fireEvent.click(answerButton);
 
           expect(screen.getByText(`正解`)).toBeInTheDocument();
-          expect(screen.getByText(`ボーナス時間`)).toBeInTheDocument();
-          expect(screen.getByText(`${remainTime}`)).toBeInTheDocument();
+          expect(screen.getByText(`ボーナス時間: ${remainTime}`)).toBeInTheDocument();
           expect(screen.getByText(`スコア`)).toBeInTheDocument();
 
           expect(screen.getByText(`${score}点`)).toBeInTheDocument();
+          expect(screen.getByText('※ボーナス時間✖役の点数')).toBeInTheDocument();
 
           vi.useRealTimers();
         }

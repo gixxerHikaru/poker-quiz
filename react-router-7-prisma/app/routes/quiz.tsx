@@ -4,6 +4,7 @@ import { ANSWER, getUniqueCards } from './components';
 import { judgeSystemAnswer } from './judgeSystemAnswer';
 import { calculateScore } from './calculateScore';
 import { useNavigate } from 'react-router';
+import { displayRoleScore } from './displayRoleScore';
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: 'クイズ画面' }, { name: 'description', content: 'Welcome to React Router!' }];
@@ -174,11 +175,19 @@ export default function Quiz() {
                         </span>
                       </div>
                       <div className="flex justify-between items-center text-lg text-gray-600 border-b border-gray-100 pb-3">
-                        <span className="font-medium">ボーナス時間</span>
+                        <span />
                         <span className="font-mono font-bold text-gray-800">
+                          ボーナス時間:{' '}
                           {elapsedTime <= 9000 ? `${Number(remainTime.toFixed(3))}秒` : 'なし'}
                         </span>
                       </div>
+                      <div className="flex justify-between items-center text-lg text-gray-600 border-b border-gray-100 pb-3">
+                        <span />
+                        <span className="font-mono font-bold text-gray-800">
+                          {quizData.systemAnswer}: {displayRoleScore(quizData.systemAnswer)}点
+                        </span>
+                      </div>
+
                       <div className="flex justify-between items-center pt-2">
                         <span className="text-xl font-bold text-gray-500">スコア</span>
                         <span className="text-5xl font-black text-emerald-500">
@@ -190,6 +199,10 @@ export default function Quiz() {
                           )}
                           点
                         </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span />
+                        <span className="text-xl text-gray-500">※ボーナス時間✖役の点数</span>
                       </div>
                     </div>
                   </div>
