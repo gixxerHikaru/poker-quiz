@@ -210,7 +210,8 @@ describe('解答ボタン押下後', () => {
     fireEvent.click(answerButton);
     vi.advanceTimersByTime(1000);
 
-    expect(screen.getByText('解答時間: 1.111秒')).toBeInTheDocument();
+    expect(screen.getByText('解答時間')).toBeInTheDocument();
+    expect(screen.getByText('1.111秒')).toBeInTheDocument();
 
     vi.useRealTimers();
   });
@@ -238,7 +239,8 @@ describe('解答ボタン押下後', () => {
       fireEvent.click(answerButton);
       vi.advanceTimersByTime(1000);
 
-      expect(screen.getByText(`ボーナス時間: ${remainTime}`)).toBeInTheDocument();
+      expect(screen.getByText(`ボーナス時間`)).toBeInTheDocument();
+      expect(screen.getByText(`${remainTime}`)).toBeInTheDocument();
 
       vi.useRealTimers();
     }
@@ -261,7 +263,8 @@ describe('解答ボタン押下後', () => {
     expect(answerButton).not.toBeInTheDocument();
     expect(screen.getByText('Your Answer: Time Out')).toBeInTheDocument();
     expect(screen.getByText('不正解')).toBeInTheDocument();
-    expect(screen.getByText('解答時間: タイムアウト(10秒経過)')).toBeInTheDocument();
+    expect(screen.getByText('解答時間')).toBeInTheDocument();
+    expect(screen.getByText('タイムアウト(10秒経過)')).toBeInTheDocument();
   });
 
   test.each([
@@ -383,7 +386,8 @@ describe('解答ボタン押下後', () => {
 
         expect(screen.queryByText('正解')).toBeNull();
         expect(screen.getByText('不正解')).toBeInTheDocument();
-        expect(screen.getByText('スコア: 0点')).toBeInTheDocument();
+        expect(screen.getByText('スコア')).toBeInTheDocument();
+        expect(screen.getByText('0点')).toBeInTheDocument();
       });
 
       test.each([
@@ -412,8 +416,10 @@ describe('解答ボタン押下後', () => {
         fireEvent.click(answerButton);
 
         expect(screen.getByText(`正解`)).toBeInTheDocument();
-        expect(screen.getByText(`解答時間: ${elapsedTime / 1000}秒`)).toBeInTheDocument();
-        expect(screen.getByText(`スコア: ${score}点`)).toBeInTheDocument();
+        expect(screen.getByText(`解答時間`)).toBeInTheDocument();
+        expect(screen.getByText(`${elapsedTime / 1000}秒`)).toBeInTheDocument();
+        expect(screen.getByText(`スコア`)).toBeInTheDocument();
+        expect(screen.getByText(`${score}点`)).toBeInTheDocument();
 
         vi.useRealTimers();
       });
@@ -429,7 +435,7 @@ describe('解答ボタン押下後', () => {
           score: 30,
           description: '整数',
         },
-        { ...straightList, advanceTime: 5000, remainTime: '5秒', score: 40, description: '整数' },
+        { ...straightList, advanceTime: 5500, remainTime: '4.5秒', score: 36, description: '整数' },
         { ...flushList, advanceTime: 6000, remainTime: '4秒', score: 52, description: '整数' },
         { ...fullHouseList, advanceTime: 7000, remainTime: '3秒', score: 63, description: '整数' },
         {
@@ -486,8 +492,11 @@ describe('解答ボタン押下後', () => {
           fireEvent.click(answerButton);
 
           expect(screen.getByText(`正解`)).toBeInTheDocument();
-          expect(screen.getByText(`ボーナス時間: ${remainTime}`)).toBeInTheDocument();
-          expect(screen.getByText(`スコア: ${score}点`)).toBeInTheDocument();
+          expect(screen.getByText(`ボーナス時間`)).toBeInTheDocument();
+          expect(screen.getByText(`${remainTime}`)).toBeInTheDocument();
+          expect(screen.getByText(`スコア`)).toBeInTheDocument();
+
+          expect(screen.getByText(`${score}点`)).toBeInTheDocument();
 
           vi.useRealTimers();
         }
@@ -504,11 +513,11 @@ test('結果表示後、Next Gameボタンが見え、押すと再度ゲーム�
 
   await user.click(answerButton);
 
-  const nextButton = await screen.findByRole('button', { name: 'Next Game' });
+  const nextButton = await screen.findByRole('button', { name: '次のゲーム' });
   await user.click(nextButton);
 
   expect(await screen.findByRole('button', { name: 'ハイカード' })).toBeInTheDocument();
-  expect(screen.queryByRole('button', { name: 'Next Game' })).toBeNull();
+  expect(screen.queryByRole('button', { name: '次のゲーム' })).toBeNull();
 });
 
 test('計5回ゲームをしたら、結果表示画面で結果を確認でき、ホームに戻るボタンでホームに戻れる', () => {
@@ -537,9 +546,9 @@ test('計5回ゲームをしたら、結果表示画面で結果を確認でき�
     vi.advanceTimersByTime(10000);
   });
   screen.getByText('Your Answer: Time Out');
-  expect(screen.queryByRole('button', { name: 'Next Game' })).toBeNull();
+  expect(screen.queryByRole('button', { name: '次のゲーム' })).toBeNull();
 
-  const resultButton = screen.getByRole('button', { name: 'Result' });
+  const resultButton = screen.getByRole('button', { name: '結果を見る' });
   expect(resultButton).toBeInTheDocument();
   fireEvent.click(resultButton);
 
@@ -594,31 +603,31 @@ test('5回ゲームを行い、正解と不正解が混ざった場合の結果�
   vi.advanceTimersByTime(1111);
   fireEvent.click(screen.getByRole('button', { name: 'ハイカード' }));
   screen.getByText('正解');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+  fireEvent.click(screen.getByRole('button', { name: '次のゲーム' }));
 
   screen.getByRole('button', { name: 'ワンペア' });
   vi.advanceTimersByTime(2000);
   fireEvent.click(screen.getByRole('button', { name: 'ワンペア' }));
   screen.getByText('正解');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+  fireEvent.click(screen.getByRole('button', { name: '次のゲーム' }));
 
   screen.getByRole('button', { name: 'ツーペア' });
   vi.advanceTimersByTime(2000);
   fireEvent.click(screen.getByRole('button', { name: 'ツーペア' }));
   screen.getByText('正解');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+  fireEvent.click(screen.getByRole('button', { name: '次のゲーム' }));
 
   screen.getByRole('button', { name: 'フラッシュ' });
   vi.advanceTimersByTime(5000);
   fireEvent.click(screen.getByRole('button', { name: 'フラッシュ' }));
   screen.getByText('正解');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+  fireEvent.click(screen.getByRole('button', { name: '次のゲーム' }));
 
   screen.getByRole('button', { name: 'フルハウス' });
   vi.advanceTimersByTime(1000);
   fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
   screen.getByText('不正解');
-  const resultButton = screen.getByRole('button', { name: 'Result' });
+  const resultButton = screen.getByRole('button', { name: '結果を見る' });
   fireEvent.click(resultButton);
 
   screen.getByText('クイズ結果');
@@ -667,31 +676,31 @@ test('5回とも不正解（選択ミス）だった場合の結果を確認で�
   vi.advanceTimersByTime(1000);
   fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
   screen.getByText('不正解');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+  fireEvent.click(screen.getByRole('button', { name: '次のゲーム' }));
 
   screen.getByRole('button', { name: 'ワンペア' });
   vi.advanceTimersByTime(1000);
   fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
   screen.getByText('不正解');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+  fireEvent.click(screen.getByRole('button', { name: '次のゲーム' }));
 
   screen.getByRole('button', { name: 'ツーペア' });
   vi.advanceTimersByTime(1000);
   fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
   screen.getByText('不正解');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+  fireEvent.click(screen.getByRole('button', { name: '次のゲーム' }));
 
   screen.getByRole('button', { name: 'フラッシュ' });
   vi.advanceTimersByTime(1000);
   fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
   screen.getByText('不正解');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+  fireEvent.click(screen.getByRole('button', { name: '次のゲーム' }));
 
   screen.getByRole('button', { name: 'フルハウス' });
   vi.advanceTimersByTime(1000);
   fireEvent.click(screen.getByRole('button', { name: 'ロイヤルフラッシュ' }));
 
-  const resultButton = screen.getByRole('button', { name: 'Result' });
+  const resultButton = screen.getByRole('button', { name: '結果を見る' });
   fireEvent.click(resultButton);
 
   screen.getByText('クイズ結果');
@@ -727,5 +736,5 @@ function notAsyncHighCardsAndNextButtonPush() {
     vi.advanceTimersByTime(10000);
   });
   screen.getByText('Your Answer: Time Out');
-  fireEvent.click(screen.getByRole('button', { name: 'Next Game' }));
+  fireEvent.click(screen.getByRole('button', { name: '次のゲーム' }));
 }

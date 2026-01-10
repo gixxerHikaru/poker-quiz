@@ -146,101 +146,141 @@ export default function Quiz() {
   function gameDiv() {
     return (
       <>
-        <CardList cards={quizData.cardsPath} />
+        <div className="flex flex-col items-center gap-4">
+          <CardList cards={quizData.cardsPath} />
 
-        {userSelectAnswer ? (
-          <div className="flex flex-col items-end gap-4">
-            <>
-              <div>Your Answer: {userSelectAnswer}</div>
-              <div>Field: {quizData.systemAnswer}</div>
-              {userSelectAnswer == quizData.systemAnswer ? (
-                <>
-                  <div>正解</div>
-                  <div>解答時間: {Number((elapsedTime / 1000).toFixed(3))}秒</div>
-                  <div>
-                    ボーナス時間:{' '}
-                    {elapsedTime <= 9000 ? `${Number(remainTime.toFixed(3))}秒` : 'なし'}
+          {userSelectAnswer ? (
+            <div className="flex flex-col items-center gap-4">
+              <>
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-12 text-lg font-medium text-gray-500 bg-white px-8 py-4 rounded-full shadow-sm">
+                  <div>Your Answer: {userSelectAnswer}</div>
+                  <div className="hidden sm:block w-px bg-gray-200"></div>
+                  <div>Field: {quizData.systemAnswer}</div>
+                </div>
+
+                {userSelectAnswer == quizData.systemAnswer ? (
+                  <div className="flex flex-col items-center w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
+                    <div className="w-full bg-emerald-600 py-6 text-center shadow-md relative overflow-hidden">
+                      <div className="absolute inset-0 bg-white/10 opacity-50 pattern-dots"></div>
+                      <div className="relative text-5xl font-black text-white tracking-widest drop-shadow-sm">
+                        正解
+                      </div>
+                    </div>
+                    <div className="p-8 w-full space-y-6">
+                      <div className="flex justify-between items-center text-lg text-gray-600 border-b border-gray-100 pb-3">
+                        <span className="font-medium">解答時間</span>
+                        <span className="font-mono font-bold text-gray-800">
+                          {Number((elapsedTime / 1000).toFixed(3))}秒
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-lg text-gray-600 border-b border-gray-100 pb-3">
+                        <span className="font-medium">ボーナス時間</span>
+                        <span className="font-mono font-bold text-gray-800">
+                          {elapsedTime <= 9000 ? `${Number(remainTime.toFixed(3))}秒` : 'なし'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-xl font-bold text-gray-500">スコア</span>
+                        <span className="text-5xl font-black text-emerald-500">
+                          {Number(
+                            calculateScore(
+                              Number(remainTime.toFixed(3)),
+                              quizData.systemAnswer
+                            ).toFixed(3)
+                          )}
+                          点
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    スコア:{' '}
-                    {Number(
-                      calculateScore(Number(remainTime.toFixed(3)), quizData.systemAnswer).toFixed(
-                        3
-                      )
-                    )}
-                    点
+                ) : (
+                  <div className="flex flex-col items-center w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
+                    <div className="w-full bg-red-600 py-6 text-center shadow-md relative overflow-hidden">
+                      <div className="absolute inset-0 bg-white/10 opacity-50 pattern-dots"></div>
+                      <div className="relative text-5xl font-black text-white tracking-widest drop-shadow-sm">
+                        不正解
+                      </div>
+                    </div>
+                    <div className="p-8 w-full space-y-6">
+                      <div className="flex justify-between items-center text-lg text-gray-600 border-b border-gray-100 pb-3">
+                        <span className="font-medium">解答時間</span>
+                        {isTimeout ? (
+                          <span className="font-mono font-bold text-gray-800">
+                            タイムアウト(10秒経過)
+                          </span>
+                        ) : (
+                          <span className="font-mono font-bold text-gray-800">
+                            {Number((elapsedTime / 1000).toFixed(3))}秒
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex justify-between items-center pt-2">
+                        <span className="text-xl font-bold text-gray-500">スコア</span>
+                        <span className="text-5xl font-black text-red-500">0点</span>
+                      </div>
+                    </div>
                   </div>
-                </>
+                )}
+              </>
+              {gameCountFlag ? (
+                <button
+                  className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => {
+                    const score =
+                      userSelectAnswer === quizData.systemAnswer
+                        ? Number(
+                            calculateScore(
+                              Number(remainTime.toFixed(3)),
+                              quizData.systemAnswer
+                            ).toFixed(3)
+                          )
+                        : 0;
+                    setScoreList([...scoreList, score]);
+                    setResultFlag(true);
+                  }}
+                >
+                  結果を見る
+                </button>
               ) : (
-                <>
-                  <div>不正解</div>
-                  {isTimeout ? (
-                    <div>解答時間: タイムアウト(10秒経過)</div>
-                  ) : (
-                    <div>解答時間: {Number((elapsedTime / 1000).toFixed(3))}秒</div>
-                  )}
-                  <div>スコア: 0点</div>
-                </>
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => {
+                    const score =
+                      userSelectAnswer === quizData.systemAnswer
+                        ? Number(
+                            calculateScore(
+                              Number(remainTime.toFixed(3)),
+                              quizData.systemAnswer
+                            ).toFixed(3)
+                          )
+                        : 0;
+                    setScoreList([...scoreList, score]);
+                    setUserSelectAnswer(undefined);
+                    setGameCount(gameCount + 1);
+                  }}
+                >
+                  次のゲーム
+                </button>
               )}
-            </>
-            {gameCountFlag ? (
-              <button
-                className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
-                onClick={() => {
-                  const score =
-                    userSelectAnswer === quizData.systemAnswer
-                      ? Number(
-                          calculateScore(
-                            Number(remainTime.toFixed(3)),
-                            quizData.systemAnswer
-                          ).toFixed(3)
-                        )
-                      : 0;
-                  setScoreList([...scoreList, score]);
-                  setResultFlag(true);
-                }}
-              >
-                Result
-              </button>
-            ) : (
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={() => {
-                  const score =
-                    userSelectAnswer === quizData.systemAnswer
-                      ? Number(
-                          calculateScore(
-                            Number(remainTime.toFixed(3)),
-                            quizData.systemAnswer
-                          ).toFixed(3)
-                        )
-                      : 0;
-                  setScoreList([...scoreList, score]);
-                  setUserSelectAnswer(undefined);
-                  setGameCount(gameCount + 1);
-                }}
-              >
-                Next Game
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-4">
-            {ANSWER.map(answerName => (
-              <button
-                key={answerName}
-                className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
-                onClick={() => {
-                  setUserSelectAnswer(answerName);
-                  setElapsedTime(Date.now() - startTime);
-                  setRemainTime((10000 - (Date.now() - startTime)) / 1000);
-                }}
-              >
-                {answerName}
-              </button>
-            ))}
-          </div>
-        )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {ANSWER.map(answerName => (
+                <button
+                  key={answerName}
+                  className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
+                  onClick={() => {
+                    setUserSelectAnswer(answerName);
+                    setElapsedTime(Date.now() - startTime);
+                    setRemainTime((10000 - (Date.now() - startTime)) / 1000);
+                  }}
+                >
+                  {answerName}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </>
     );
   }
