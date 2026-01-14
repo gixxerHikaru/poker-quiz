@@ -25,41 +25,41 @@ export function judgeSystemAnswer(cardPaths: string[]): string {
   setCardsRanks(cards);
 
   if (royalFlashCheck()) {
-    return ANSWER[9];
+    return [ANSWER[9], ['・', '・', '・', '・', '・']];
   }
 
   if (straightCheck() && flashCheck()) {
-    return ANSWER[8];
+    return [ANSWER[8], ['・', '・', '・', '・', '・']];
   }
 
   if (sameRanksCheck(4)) {
-    return ANSWER[7];
+    return [ANSWER[7], positonCheck(cards, cardsRanks, ANSWER[7])];
   }
 
   if (sameRanksCheck(3) && sameRanksCheck(2)) {
-    return ANSWER[6];
+    return [ANSWER[6], ['・', '・', '・', '・', '・']];
   }
 
   if (flashCheck()) {
-    return ANSWER[5];
+    return [ANSWER[5], ['・', '・', '・', '・', '・']];
   }
 
   if (straightCheck()) {
-    return ANSWER[4];
+    return [ANSWER[4], ['・', '・', '・', '・', '・']];
   }
 
   if (sameRanksCheck(3)) {
-    return ANSWER[3];
+    return [ANSWER[3], positonCheck(cards, cardsRanks, ANSWER[3])];
   }
 
   if (sameRanksCheck(2)) {
     const pairCount = Object.values(cardsRanks).filter(count => count === 2).length;
     if (pairCount === 2) {
-      return ANSWER[2];
+      return [ANSWER[2], positonCheck(cards, cardsRanks, ANSWER[2])];
     }
-    return ANSWER[1];
+    return [ANSWER[1], positonCheck(cards, cardsRanks, ANSWER[1])];
   }
-  return ANSWER[0];
+  return [ANSWER[0], ['', '', '', '', '']];
 
   function setCardsSuits(cards) {
     cards.map(card => {
@@ -103,6 +103,38 @@ export function judgeSystemAnswer(cardPaths: string[]): string {
         default:
           cardsRanks[rank] += 1;
       }
+    });
+  }
+
+  function positonCheck(cards, cardsRanks, answer) {
+    const expectNumber =
+      answer === ANSWER[1] || answer === ANSWER[2]
+        ? 2
+        : answer === ANSWER[3]
+          ? 3
+          : answer === ANSWER[7]
+            ? 4
+            : 0;
+    const transformPairKeys = Object.keys(cardsRanks)
+      .filter(key => cardsRanks[key] === expectNumber)
+      .map(pairKey => {
+        switch (pairKey) {
+          case '1':
+            return 'A';
+          case '11':
+            return 'J';
+          case '12':
+            return 'Q';
+          case '13':
+            return 'K';
+          default:
+            return pairKey;
+        }
+      });
+
+    return cards.map(card => {
+      const rank = card.slice(1, -4)[0] === '0' ? card.slice(2, -4) : card.slice(1, -4);
+      return rank === transformPairKeys[0] ? '・' : rank === transformPairKeys[1] ? '・' : '';
     });
   }
 

@@ -31,14 +31,29 @@ const onePairList = {
   cards: ['C02.png', 'D02.png', 'H04.png', 'S05.png', 'C07.png'],
   score: 2,
 };
+const onePairFaceCardList = {
+  name: 'ワンペア',
+  cards: ['C02.png', 'D03.png', 'H04.png', 'SJ.png', 'CJ.png'],
+  score: 2,
+};
 const twoPairList = {
   name: 'ツーペア',
   cards: ['C02.png', 'D03.png', 'H03.png', 'S05.png', 'C05.png'],
   score: 3,
 };
+const twoPairFaceCardList = {
+  name: 'ツーペア',
+  cards: ['CQ.png', 'DQ.png', 'HK.png', 'SK.png', 'C05.png'],
+  score: 3,
+};
 const threeOfAKindList = {
   name: 'スリーカード',
   cards: ['C02.png', 'D03.png', 'H03.png', 'S03.png', 'C07.png'],
+  score: 5,
+};
+const threeOfAKindFaceCardList = {
+  name: 'スリーカード',
+  cards: ['CA.png', 'D03.png', 'HA.png', 'S04.png', 'CA.png'],
   score: 5,
 };
 const straightList = {
@@ -59,6 +74,11 @@ const fullHouseList = {
 const fourOfAKindList = {
   name: 'フォーカード',
   cards: ['C04.png', 'D04.png', 'H04.png', 'S04.png', 'C07.png'],
+  score: 34,
+};
+const fourOfAKindFaceCardList = {
+  name: 'フォーカード',
+  cards: ['C0A.png', 'C07.png', 'D0A.png', 'H0A.png', 'S0A.png'],
   score: 34,
 };
 const straightFlushList = {
@@ -265,6 +285,97 @@ describe('解答ボタン押下後', () => {
     expect(screen.getByText('解答時間')).toBeInTheDocument();
     expect(screen.getByText('タイムアウト(10秒経過)')).toBeInTheDocument();
   });
+
+  test.each([
+    {
+      ...highCardsList,
+      description: 'ハイカード',
+      expectValues: ['', '', '', '', ''],
+    },
+    {
+      ...onePairList,
+      description: 'ワンペア',
+      expectValues: ['・', '・', '', '', ''],
+    },
+    {
+      ...onePairFaceCardList,
+      description: 'ワンペア',
+      expectValues: ['', '', '', '・', '・'],
+    },
+    {
+      ...twoPairList,
+      description: 'ツーペア',
+      expectValues: ['', '・', '・', '・', '・'],
+    },
+    {
+      ...twoPairFaceCardList,
+      description: 'ツーペア',
+      expectValues: ['・', '・', '・', '・', ''],
+    },
+    {
+      ...threeOfAKindList,
+      description: 'スリーカード',
+      expectValues: ['', '・', '・', '・', ''],
+    },
+    {
+      ...threeOfAKindFaceCardList,
+      description: 'スリーカード',
+      expectValues: ['・', '', '・', '', '・'],
+    },
+    {
+      ...straightList,
+      description: 'ストレート',
+      expectValues: ['・', '・', '・', '・', '・'],
+    },
+    {
+      ...flushList,
+      description: 'フラッシュ',
+      expectValues: ['・', '・', '・', '・', '・'],
+    },
+    {
+      ...fullHouseList,
+      description: 'フルハウス',
+      expectValues: ['・', '・', '・', '・', '・'],
+    },
+    {
+      ...fourOfAKindList,
+      description: 'フォーカード',
+      expectValues: ['・', '・', '・', '・', ''],
+    },
+    {
+      ...fourOfAKindFaceCardList,
+      description: 'フォーカード',
+      expectValues: ['・', '', '・', '・', '・'],
+    },
+    {
+      ...straightFlushList,
+      description: 'ストレートフラッシュ',
+      expectValues: ['・', '・', '・', '・', '・'],
+    },
+    {
+      ...royalFlashList,
+      description: 'ロイヤルフラッシュ',
+      expectValues: ['・', '・', '・', '・', '・'],
+    },
+  ])(
+    '$description 判定で使われたカードの下部に「・」が表示され、どれか判定で使われたか一目でわかる',
+    async ({ name, cards, expectValues }) => {
+      const cardPaths = cards.map(c => `cards/${c}`);
+      vi.mocked(getUniqueCards).mockReturnValue(cardPaths);
+
+      render(<Stub initialEntries={['/quiz']} />);
+      const user = userEvent.setup();
+
+      const selectedAnswer = name;
+      const answerButton = await screen.findByRole('button', { name: selectedAnswer });
+      await user.click(answerButton);
+
+      for (let i = 0; i < 5; i++) {
+        const mark = await screen.findByTestId(`judge-${i}`);
+        expect(mark).toHaveTextContent(expectValues[i]);
+      }
+    }
+  );
 
   test.each([
     {
