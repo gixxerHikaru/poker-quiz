@@ -1,6 +1,6 @@
 import { ANSWER } from '../routes/components';
 
-export function judgeSystemAnswer(cardPaths: string[]): string {
+export function judgeSystemAnswer(cardPaths: string[]): [string, string[]] {
   const cards = cardPaths.map(path => {
     return path.split('/').pop() || '';
   });
@@ -61,7 +61,7 @@ export function judgeSystemAnswer(cardPaths: string[]): string {
   }
   return [ANSWER[0], ['', '', '', '', '']];
 
-  function setCardsSuits(cards) {
+  function setCardsSuits(cards: string[]) {
     cards.map(card => {
       switch (card[0]) {
         case 'C':
@@ -80,7 +80,7 @@ export function judgeSystemAnswer(cardPaths: string[]): string {
     });
   }
 
-  function setCardsRanks(cards) {
+  function setCardsRanks(cards: string[]) {
     cards.map(card => {
       const rank = card.slice(1, -4)[0] === '0' ? card.slice(2, -4) : card.slice(1, -4);
 
@@ -101,12 +101,12 @@ export function judgeSystemAnswer(cardPaths: string[]): string {
           cardsRanks['1'] += 1;
           break;
         default:
-          cardsRanks[rank] += 1;
+          (cardsRanks as Record<string, number>)[rank] += 1;
       }
     });
   }
 
-  function positonCheck(cards, cardsRanks, answer) {
+  function positonCheck(cards: string[], cardsRanks: Record<string, number>, answer: string) {
     const expectNumber =
       answer === ANSWER[1] || answer === ANSWER[2]
         ? 2

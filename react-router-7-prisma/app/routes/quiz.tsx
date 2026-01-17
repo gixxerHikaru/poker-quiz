@@ -1,4 +1,4 @@
-import type { Route } from './+types/home';
+import type { Route } from './+types/quiz';
 import { memo, useEffect, useState } from 'react';
 import { ANSWER, getUniqueCards } from './components';
 import { judgeSystemAnswer } from '../components/judgeSystemAnswer';
@@ -10,14 +10,14 @@ export function meta({}: Route.MetaArgs) {
   return [{ title: 'クイズ画面' }, { name: 'description', content: 'Welcome to React Router!' }];
 }
 
-const CardList = memo(({ cards }) => {
+const CardList = memo(({ cards }: { cards: string[] }) => {
   return (
     <div className="flex flex-wrap justify-center gap-2 sm:gap-4 px-2">
-      <img src={cards[0]} alt="card1" className="w-16 sm:w-24 h-auto" />
-      <img src={cards[1]} alt="card2" className="w-16 sm:w-24 h-auto" />
-      <img src={cards[2]} alt="card3" className="w-16 sm:w-24 h-auto" />
-      <img src={cards[3]} alt="card4" className="w-16 sm:w-24 h-auto" />
-      <img src={cards[4]} alt="card5" className="w-16 sm:w-24 h-auto" />
+      <img src={cards[0] ?? ''} alt="card1" className="w-16 sm:w-24 h-auto" />
+      <img src={cards[1] ?? ''} alt="card2" className="w-16 sm:w-24 h-auto" />
+      <img src={cards[2] ?? ''} alt="card3" className="w-16 sm:w-24 h-auto" />
+      <img src={cards[3] ?? ''} alt="card4" className="w-16 sm:w-24 h-auto" />
+      <img src={cards[4] ?? ''} alt="card5" className="w-16 sm:w-24 h-auto" />
     </div>
   );
 });
@@ -146,6 +146,8 @@ export default function Quiz() {
   }
 
   function gameDiv() {
+    if (!quizData) return null;
+
     return (
       <>
         <div className="flex flex-col items-center gap-4">
@@ -157,15 +159,13 @@ export default function Quiz() {
                 <div className="flex flex-wrap justify-center gap-2 sm:gap-4 px-2">
                   {quizData.positionAnswer.map((dot, index) => {
                     return (
-                      <>
-                        <span
-                          data-testid={`judge-${index}`}
-                          key={index}
-                          className="w-16 sm:w-24 h-auto flex justify-center"
-                        >
-                          {dot}
-                        </span>
-                      </>
+                      <span
+                        data-testid={`judge-${index}`}
+                        key={index}
+                        className="w-16 sm:w-24 h-auto flex justify-center"
+                      >
+                        {dot}
+                      </span>
                     );
                   })}
                 </div>

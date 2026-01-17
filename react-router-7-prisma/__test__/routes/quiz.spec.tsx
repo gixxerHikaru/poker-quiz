@@ -7,10 +7,10 @@ import { userEvent } from '@testing-library/user-event';
 import Home from '../../app/routes/home';
 
 vi.mock('../../app/routes/components', async importOriginal => {
-  const mod = await importOriginal();
+  const mod = (await importOriginal()) as typeof import('../../app/routes/components');
   return {
     ...mod,
-    getUniqueCards: vi.fn(mod.getUniqueCards),
+    getUniqueCards: vi.fn(mod.getUniqueCards) as typeof mod.getUniqueCards,
   };
 });
 
