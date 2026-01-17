@@ -1,4 +1,4 @@
-import { ANSWER } from './components';
+import { ANSWER } from '../routes/components';
 
 export function judgeSystemAnswer(cardPaths: string[]): string {
   const cards = cardPaths.map(path => {

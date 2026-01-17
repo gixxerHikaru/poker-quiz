@@ -1,10 +1,10 @@
 import type { Route } from './+types/home';
 import { memo, useEffect, useState } from 'react';
 import { ANSWER, getUniqueCards } from './components';
-import { judgeSystemAnswer } from './judgeSystemAnswer';
-import { calculateScore } from './calculateScore';
+import { judgeSystemAnswer } from '../components/judgeSystemAnswer';
+import { calculateScore } from '../components/calculateScore';
 import { useNavigate } from 'react-router';
-import { displayRoleScore } from './displayRoleScore';
+import { displayRoleScore } from '../components/displayRoleScore';
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: 'クイズ画面' }, { name: 'description', content: 'Welcome to React Router!' }];
